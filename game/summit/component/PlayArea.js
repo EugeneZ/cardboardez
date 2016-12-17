@@ -249,10 +249,12 @@ export default class PlayArea extends Component {
         const isCenter = card.toString().length === 1;
         let data = null;
 
-        if ((typeof actionNeeded.player === 'boolean' && !isCenter) || (typeof actionNeeded.center === 'boolean' && isCenter)) {
+        if (!actionNeeded) {
+            data = { target: card };
+        } else if ((typeof actionNeeded.player === 'boolean' && !isCenter) || (typeof actionNeeded.center === 'boolean' && isCenter)) {
             data = { target: card };
         } else if (typeof actionNeeded.player === 'number' || typeof actionNeeded.center === 'number') {
-            if (this.state.currentTarget && isCenter ? this.state.currentTarget.toString() === 1 : this.state.currentTarget.toString() > 1) {
+            if (this.state.currentTarget && (isCenter ? this.state.currentTarget.toString().length === 1 : this.state.currentTarget.toString().length > 1)) {
                 data = {
                     target1: this.state.currentTarget,
                     target2: card
@@ -263,7 +265,7 @@ export default class PlayArea extends Component {
         }
 
         if (data) {
-            this.sendAction({ target: card });
+            this.sendAction(data);
         }
     }
 

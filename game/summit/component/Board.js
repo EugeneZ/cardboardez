@@ -30,7 +30,7 @@ export default class Board extends Component {
                         onClick={() => this.props.onClickCard(player.id)}
                         name={isSelf ? 'ME' : player.name}
                         role={player.role ? player.role : isSelf ? player._private.role : this.props.me._private.peeked[player.id]}
-                        known={this.props.me._private.knows[player.id]}
+                        known={this.props.me._private.knows.includes(player.id)}
                         shield={player.shield}
                         artifact={isSelf ? player._private.artifact : player.artifact}
                     />;

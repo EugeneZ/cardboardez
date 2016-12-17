@@ -376,10 +376,9 @@ module.exports.doppleganger = function (pick, game) {
             .player(pick.target)
             .peek((player, peekedAt) => player._private.doppleganger = game._hidden.doppleganger = peekedAt)
             .do();
-
+    },()=>{
         // Since there's a doppleganger, we need to recalculate the "knows" afterwards
         setKnows(game._players);
-    },()=>{
         game.mode = game.order[game.order.indexOf('doppleganger') + 1];
     });
 };
@@ -590,11 +589,11 @@ module.exports.thing = function (pick, game, isDoppleganger) {
 
 module.exports.seer = function (pick, game, isDoppleganger) {
     playerActionOrReady(game, pick, 'seer', ()=>{
-        if ((pick.target1 && !pick.target2) || (!pick.target1 && pick.target2) || pick.target === pick.user.id) {
+        if ((!_.isNil(pick.target1) && _.isNil(pick.target2)) || (_.isNil(pick.target1) && !_.isNil(pick.target2)) || pick.target === pick.user.id) {
             throwFatalError(pick);
         }
 
-        if (!pick.target && !pick.target1) {
+        if (!pick.target && _.isNil(pick.target1)) {
             return;
         }
 
@@ -602,8 +601,8 @@ module.exports.seer = function (pick, game, isDoppleganger) {
 
         if (pick.target1) {
             action
-                .center(pick.target1)
-                .center(pick.target2);
+                .center(parseInt(pick.target1, 10))
+                .center(parseInt(pick.target2, 10));
         } else {
             action
                 .player(pick.target);
