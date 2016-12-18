@@ -685,10 +685,14 @@ module.exports.robber = function (pick, game, isDoppleganger) {
         }
 
         doAction(game, pick)
+            .player(pick.target)
+            .peek()
+            .do();
+
+        doAction(game, pick)
             .player(pick.user.id)
             .player(pick.target)
             .swap()
-            .peek()
             .do();
     },()=>{
         game.mode = game.order[game.order.indexOf('robber') + 1];
