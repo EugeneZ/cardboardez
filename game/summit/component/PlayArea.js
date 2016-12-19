@@ -7,6 +7,9 @@ import Paper from 'material-ui/Paper';
 import LinearProgress from 'material-ui/LinearProgress';
 import FlatButton from 'material-ui/FlatButton';
 import Board from './Board';
+import Info from './Info';
+import roles from '../roles';
+import times from 'lodash/times';
 
 const styles = {
     wrapper: {
@@ -144,14 +147,18 @@ export default class PlayArea extends Component {
         this.node = ReactDOM.findDOMNode(this);
         window.addEventListener('resize', this.resizeToFit);
         this.resizeToFit();
+        this.calculateRoles();
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.resizeToFit);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         this.resizeToFit();
+        if (this.props.params.id !== prevProps.params.id || this.props.games !== prevProps.games) {
+            this.calculateRoles();
+        }
     }
 
     render() {
@@ -169,10 +176,10 @@ export default class PlayArea extends Component {
         const color = itsMyTurn ? styles.actionNeeded : {};
 
         const submode = me._private.role === 'doppleganger' &&
-                        game.mode !== 'doppleganger' &&
-                        game.mode.indexOf('doppleganger') === 0 ?
-                            game.mode.replace('doppleganger', '') :
-                            game.mode;
+        game.mode !== 'doppleganger' &&
+        game.mode.indexOf('doppleganger') === 0 ?
+            game.mode.replace('doppleganger', '') :
+            game.mode;
 
         let instructions = 'Wait...';
         let actionNeeded = null;
@@ -203,26 +210,35 @@ export default class PlayArea extends Component {
             actionNeeded = roleDetails[submode].actionNeeded;
         }
 
-        let main = <Board players={players} game={game} me={me} onClickCard={this.onClickCard.bind(this, actionNeeded)}/>;
+        let main = <Board players={players} game={game} me={me}
+                          onClickCard={this.onClickCard.bind(this, actionNeeded)}/>;
         if (this.state.tab === 1) {
+            main = <Info roles={this.roles} order={game.order.filter(
+                order => !['day',
+                    'witchSwaps',
+                    'paranormalInvestigator2',
+                    'dopplegangerparanormalInvestigator2',
+                    'dopplegangerwitchSwaps'].includes(order))}/>;
+        } else if (this.state.tab === 2) {
             main = 'Coming soon...';
         }
 
         const readyButton = !actionNeeded && <FlatButton label="Ready" primary={true} onTouchTap={this.onDoNothing}/>
-        const passButton = actionNeeded && actionNeeded.optional && <FlatButton label="Do Nothing" primary={true} onTouchTap={this.onDoNothing}/>
+        const passButton = actionNeeded && actionNeeded.optional &&
+            <FlatButton label="Do Nothing" primary={true} onTouchTap={this.onDoNothing}/>
 
         const leftAndRightButtons = actionNeeded && actionNeeded.chooseLeftOrRight && [
-            <FlatButton
-                label="Move Cards Left"
-                primary={true}
-                onTouchTap={this.onMoveLeft}
-            />,
-            <FlatButton
-                label="Move Cards Right"
-                primary={true}
-                onTouchTap={this.onMoveRight}
-            />,
-        ];
+                <FlatButton
+                    label="Move Cards Left"
+                    primary={true}
+                    onTouchTap={this.onMoveLeft}
+                />,
+                <FlatButton
+                    label="Move Cards Right"
+                    primary={true}
+                    onTouchTap={this.onMoveRight}
+                />,
+            ];
 
         return (
             <div>
@@ -237,8 +253,10 @@ export default class PlayArea extends Component {
                     <BottomNavigation selectedIndex={this.state.tab}>
                         <BottomNavigationItem label="Main" icon={<FontIcon className="fa fa-clone"/>}
                                               onTouchTap={() => this.setState({ tab: 0 })}/>
-                        <BottomNavigationItem label="Log" icon={<FontIcon className="fa fa-hand-stop-o"/>}
+                        <BottomNavigationItem label="Info" icon={<FontIcon className="fa fa-info"/>}
                                               onTouchTap={() => this.setState({ tab: 1 })}/>
+                        <BottomNavigationItem label="Log" icon={<FontIcon className="fa fa-hand-stop-o"/>}
+                                              onTouchTap={() => this.setState({ tab: 2 })}/>
                     </BottomNavigation>
                 </Paper>
             </div>
@@ -300,5 +318,21 @@ export default class PlayArea extends Component {
         const me = players.find(player => player.id === this.props.user.id);
 
         return { game, me, players };
+    }
+
+    calculateRoles() {
+        const game = this.props.games.find(game => game.id === this.props.params.id);
+        if (!game) {
+            return;
+        }
+
+        this.roles = roles.filter(role => game.options[role.name]);
+
+        if (game.options.werewolves) {
+            times(game.options.werewolves, ()=> this.roles.push({ label: 'Werewolf', description: 'Knows the other werewolves.' }));
+        }
+        if (game.options.villagers) {
+            times(game.options.villagers, ()=> this.roles.push({ label: 'Villager', description: 'Want a werewolf to die.' }));
+        }
     }
 }
