@@ -37,7 +37,7 @@
     "hammerjs": "^2.0.8",
     "lodash": "^4.16.2",
     "material-ui": "^0.15.4",
-    "moment": "^2.17.0",
+    "moment": "^2.17.1",
     "passport-facebook": "^1.0.3",
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^1.0.0",
@@ -53,6 +53,7 @@
     "redux": "^3.6.0",
     "redux-saga": "^0.11.1",
     "require-globify": "^1.4.1",
+    "reselect": "^2.5.4",
     "rethinkdbdash": "^2.3.23",
     "socket.io-client": "^1.4.8",
     "uglify-js": "^2.7.3"

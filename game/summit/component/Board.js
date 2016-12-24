@@ -49,6 +49,7 @@ export default class Board extends Component {
                     {this.props.players.map((player, i) => {
                         const isSelf = this.props.me.id === player.id;
                         return <Player
+                            key={i}
                             onClick={() => this.props.onClickCard(player.id)}
                             name={isSelf ? 'You' : player.name}
                             role={player.role ? player.role : isSelf ? player._private.role : this.props.me._private.peeked[player.id]}

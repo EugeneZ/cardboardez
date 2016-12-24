@@ -10,6 +10,9 @@ import Board from './Board';
 import Info from './Info';
 import roles from '../roles';
 import times from 'lodash/times';
+import random from 'lodash/random';
+import { game as gameSelector, players as playersSelector, me as meSelector } from '../selectors';
+import moment from 'moment';
 
 const styles = {
     wrapper: {
@@ -140,10 +143,18 @@ const roleDetails = {
 export default class PlayArea extends Component {
     state = {
         tab: 0,
-        currentTarget: null
+        currentTarget: null,
+        readyAt: moment().add(random(5, 10), 's').valueOf()
     };
 
+    componentWillMount() {
+        this.game = gameSelector(this.props);
+        this.players = playersSelector(this.props);
+        this.me = meSelector(this.props);
+    }
+
     componentDidMount() {
+        this.timer = setInterval(()=>this.forceUpdate(), 500);
         this.node = ReactDOM.findDOMNode(this);
         window.addEventListener('resize', this.resizeToFit);
         this.resizeToFit();
@@ -152,6 +163,25 @@ export default class PlayArea extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.resizeToFit);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const newGame = gameSelector(nextProps);
+        const newPlayers = playersSelector(nextProps);
+        const newMe = meSelector(nextProps);
+
+        if (newMe && this.me && !newMe.ready && this.me.ready) {
+            this.setState({
+                readyAt: moment().add(random(1, 5), 's').valueOf()
+            });
+            this.timer = setInterval(()=>this.forceUpdate(), 500);
+        } else if (newMe && this.me && newMe.ready && !this.me.ready) {
+            clearInterval(this.timer);
+        }
+
+        this.game = newGame;
+        this.players = newPlayers;
+        this.me = newMe;
     }
 
     componentDidUpdate(prevProps) {
@@ -166,13 +196,13 @@ export default class PlayArea extends Component {
             return null;
         }
 
-        const { game, players, me } = this.getCommonValues(true);
+        const { game, players, me } = this;
 
         const progress = (game.order.indexOf(game.mode) + 1 / game.order.length) * 100;
 
-        const itsMyTurn = game.mode === me._private.role ||
+        const itsMyTurn = !me.ready && (game.mode === me._private.role ||
             (['paranormalInvestigator', 'witch'].includes(me._private.role) && game.mode.indexOf(me._private.role) === 0) ||
-            (me._private.role === 'doppleganger' && game.mode.indexOf('doppleganger' + me._private.doppleganger) === 0);
+            (me._private.role === 'doppleganger' && game.mode.indexOf('doppleganger' + me._private.doppleganger) === 0));
         const color = itsMyTurn ? styles.actionNeeded : {};
 
         const submode = me._private.role === 'doppleganger' &&
@@ -223,9 +253,16 @@ export default class PlayArea extends Component {
             main = 'Coming soon...';
         }
 
-        const readyButton = !actionNeeded && <FlatButton label="Ready" primary={true} onTouchTap={this.onDoNothing}/>
+        const secondsLeft = moment(this.state.readyAt).diff(moment(), 's');
+        const readyButton = !actionNeeded && !me.ready && game.mode !== 'day' && game.mode !== 'gameover' && <FlatButton
+                disabled={secondsLeft >= 0}
+                label={secondsLeft < 0 ? 'Ready' : moment.duration(secondsLeft, 's').humanize()}
+                primary={true}
+                onTouchTap={this.onDoNothing}
+            />;
+
         const passButton = actionNeeded && actionNeeded.optional &&
-            <FlatButton label="Do Nothing" primary={true} onTouchTap={this.onDoNothing}/>
+            <FlatButton label="Do Nothing" primary={true} onTouchTap={this.onDoNothing}/>;
 
         const leftAndRightButtons = actionNeeded && actionNeeded.chooseLeftOrRight && [
                 <FlatButton
@@ -244,7 +281,7 @@ export default class PlayArea extends Component {
             <div>
                 <div style={styles.wrapper}>
                     <LinearProgress mode="determinate" value={progress}/>
-                    <Paper zDepth={4} style={Object.assign({}, styles.instructions, color)}>
+                    <Paper zDepth={4} style={{ ...styles.instructions, ...color }}>
                         {instructions}{passButton}{leftAndRightButtons}{readyButton}
                     </Paper>
                     {main}
@@ -310,16 +347,6 @@ export default class PlayArea extends Component {
         this.node.style.height = (window.innerHeight - 110) + "px";
     }
 
-    getCommonValues(playersNeedNames) {
-        const game = this.props.games.find(game => game.id === this.props.params.id);
-        const players = !playersNeedNames ? game._players : game._players.map(
-            player => Object.assign({ name: this.props.users.find(p => p.id === player.id).name }, player)
-        );
-        const me = players.find(player => player.id === this.props.user.id);
-
-        return { game, me, players };
-    }
-
     calculateRoles() {
         const game = this.props.games.find(game => game.id === this.props.params.id);
         if (!game) {
@@ -329,10 +356,16 @@ export default class PlayArea extends Component {
         this.roles = roles.filter(role => game.options[role.name]);
 
         if (game.options.werewolves) {
-            times(game.options.werewolves, ()=> this.roles.push({ label: 'Werewolf', description: 'Knows the other werewolves.' }));
+            times(game.options.werewolves, () => this.roles.push({
+                label: 'Werewolf',
+                description: 'Knows the other werewolves.'
+            }));
         }
         if (game.options.villagers) {
-            times(game.options.villagers, ()=> this.roles.push({ label: 'Villager', description: 'Want a werewolf to die.' }));
+            times(game.options.villagers, () => this.roles.push({
+                label: 'Villager',
+                description: 'Want a werewolf to die.'
+            }));
         }
     }
 }
