@@ -3,34 +3,49 @@ import times from 'lodash/times';
 
 import Player from './Player';
 
+const circleSize = 70,
+      unit = 'vw';
+
 const styles = {
     container: {
         fontFamily: 'Roboto, sans-serif',
         position: 'relative'
     },
+    board: {
+        position: 'relative',
+        width:  circleSize.toString() + unit,
+        height: circleSize.toString() + unit,
+        padding: 0,
+        borderRadius: '50%',
+        listStyle: 'none',
+        margin: '3em auto 5em',
+        border: 'solid 5px tomato'
+    },
     centerWrapper: {
         position: 'absolute',
         margin: '0 auto',
-        top: '15vw',
-        left: '43%'
+        top: '16vw',
+        left: '50vw',
+        marginLeft: '-2.5vw',
+        minWidth: '5vw'
     }
 };
 
 export default class Board extends Component {
     componentWillMount() {
-        this.styles = this.buildStyles();
+        this.playerStyles = this.buildPlayerStyles();
     }
 
     componentWillUpdate(nextProps) {
         if (this.props.players.length !== nextProps.players.length || this.props.game.centerCount !== nextProps.game.centerCount) {
-            this.styles = this.buildStyles();
+            this.playerStyles = this.buildPlayerStyles();
         }
     }
 
     render() {
         return (
             <div style={styles.container}>
-                <div style={this.styles.container}>
+                <div style={styles.board}>
                     {this.props.players.map((player, i) => {
                         const isSelf = this.props.me.id === player.id;
                         return <Player
@@ -40,7 +55,7 @@ export default class Board extends Component {
                             known={this.props.me._private.knows.includes(player.id)}
                             shield={player.shield}
                             artifact={isSelf ? player._private.artifact : player.artifact}
-                            style={this.styles.playerCards[i]}
+                            style={this.playerStyles[i]}
                         />;
                     })}
                 </div>
@@ -59,44 +74,19 @@ export default class Board extends Component {
         );
     }
 
-    buildStyles() {
-        const circleSize = 70,
-              unit = 'vw',
-              itemSize = 80,
+    buildPlayerStyles() {
+        const itemSize = 80,
               angle = 360 / this.props.players.length;
 
-        let rotation = 0;
-
-        const container = {
-            position: 'relative',
-            width:  circleSize.toString() + unit,
-            height: circleSize.toString() + unit,
-            padding: 0,
-            borderRadius: '50%',
-            listStyle: 'none',
-            margin: '3em auto 5em',
-            border: 'solid 5px tomato'
-        };
-
-        const playerCards = [];
-
-        times(this.props.players.length, () => {
-            playerCards.push({
-                display: 'block',
-                position: 'absolute',
-                top:  '50%',
-                left: '50%',
-                width:  itemSize,
-                height: itemSize,
-                margin: -(itemSize / 2) - 6,
-                transform: `rotate(${rotation}deg) translate(${circleSize / 2}${unit}) rotate(-${rotation}deg)`
-            });
-            rotation += angle;
-        });
-
-        return {
-            container,
-            playerCards
-        };
+        return times(this.props.players.length, i => ({
+            display: 'block',
+            position: 'absolute',
+            top:  '50%',
+            left: '50%',
+            width:  itemSize,
+            height: itemSize,
+            margin: -(itemSize / 2) - 6,
+            transform: `rotate(${angle * i}deg) translate(${circleSize / 2}${unit}) rotate(-${angle * i}deg)`
+        }));
     }
 }
