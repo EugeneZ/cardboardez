@@ -599,7 +599,7 @@ module.exports.seer = function (pick, game, isDoppleganger) {
 
         const action = doAction(game, pick);
 
-        if (pick.target1) {
+        if (!_.isNil(pick.target1)) {
             action
                 .center(parseInt(pick.target1, 10))
                 .center(parseInt(pick.target2, 10));
@@ -616,7 +616,7 @@ module.exports.seer = function (pick, game, isDoppleganger) {
 
 module.exports.apprenticeSeer = function (pick, game, isDoppleganger) {
     playerActionOrReady(game, pick, 'apprenticeSeer', ()=>{
-        if (!pick.target) {
+        if (_.isNil(pick.target)) {
             throwFatalError(pick);
         }
 
@@ -705,7 +705,7 @@ module.exports.witch = function (pick, game, isDoppleganger) {
             throwFatalError(pick);
         }
 
-        if (!pick.target) {
+        if (_.isNil(pick.target)) {
             return;
         }
 

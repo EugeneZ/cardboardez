@@ -38,7 +38,7 @@ export default class Player extends Component {
                 {this.props.role && <div style={styles.role}>{this.props.role}</div>}
                 {this.props.known && <div style={styles.known}>known to you</div>}
                 {this.props.shield && <div style={styles.shield}>shielded</div>}
-                {this.props.artifact && <div style={styles.artifact}>{typeof artifact === 'string' ? artifact : 'artifact'}</div>}
+                {this.props.artifact && <div style={styles.artifact}>{typeof this.props.artifact === 'string' ? this.props.artifact : 'artifact'}</div>}
             </div>
         );
     }
