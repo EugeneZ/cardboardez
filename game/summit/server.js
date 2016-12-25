@@ -189,7 +189,7 @@ function playerActionOrReady(game, action, role, cbIfRole, cbWhenNext, isDoppleg
             player.ready = true;
         }
 
-        if (game._players.every(p => p.ready)) {
+        if (!isDoppleganger && game._players.every(p => p.ready)) {
             game._players.forEach(p => p.ready = false);
             cbWhenNext();
         }
@@ -435,8 +435,9 @@ module.exports.dopplegangerparanormalInvestigator = function(pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         module.exports.paranormalInvestigator(pick, game, true);
     },()=>{
-        if (game.mode === 'paranormalInvestigator2') {
+        if (game._hidden.mode === 'paranormalInvestigator2') {
             game.mode = 'dopplegangerparanormalInvestigator2';
+            game._hidden.mode = null;
         } else {
             game.mode = game.order[game.order.indexOf('dopplegangerparanormalInvestigator') + 1];
         }
@@ -463,7 +464,7 @@ module.exports.dopplegangerwitch = function(pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         module.exports.witch(pick, game, true);
     },()=>{
-        if (game.mode === 'witchSwaps') {
+        if (game._hidden.dopWitchWillSwap) {
             game.mode = 'dopplegangerwitchSwaps';
         } else {
             game.mode = game.order[game.order.indexOf('dopplegangerwitch') + 1];
@@ -714,7 +715,11 @@ module.exports.witch = function (pick, game, isDoppleganger) {
             .peek()
             .do();
 
-        game._hidden.witchWillSwap = true;
+        if (isDoppleganger) {
+            game._hidden.dopWitchWillSwap = true;
+        } else {
+            game._hidden.witchWillSwap = true;
+        }
 
     },()=>{
         if (game._hidden.witchWillSwap) {
@@ -805,12 +810,12 @@ module.exports.auraSeer = function (pick, game, isDoppleganger) {
     }, isDoppleganger);
 };
 
-module.exports.dopplegangerauraSeer = function (pick, game, isDoppleganger) {
+module.exports.dopplegangerauraSeer = function (pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         module.exports.auraSeer(pick, game, true);
     },()=>{
         game.mode = game.order[game.order.indexOf('dopplegangerauraSeer') + 1];
-    }, isDoppleganger);
+    });
 };
 
 module.exports.drunk = function (pick, game, isDoppleganger) {
@@ -840,12 +845,12 @@ module.exports.insomniac = function (pick, game, isDoppleganger) {
     }, isDoppleganger);
 };
 
-module.exports.dopplegangerinsomniac = function (pick, game, isDoppleganger) {
+module.exports.dopplegangerinsomniac = function (pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         module.exports.insomniac(pick, game, true);
     },()=>{
         game.mode = game.order[game.order.indexOf('dopplegangerinsomniac') + 1];
-    }, isDoppleganger);
+    });
 };
 
 module.exports.squire = function (pick, game, isDoppleganger) {
@@ -862,12 +867,12 @@ module.exports.squire = function (pick, game, isDoppleganger) {
     }, isDoppleganger);
 };
 
-module.exports.dopplegangersquire = function (pick, game, isDoppleganger) {
+module.exports.dopplegangersquire = function (pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         module.exports.squire(pick, game, true);
     },()=>{
         game.mode = game.order[game.order.indexOf('dopplegangersquire') + 1];
-    }, isDoppleganger);
+    });
 };
 
 module.exports.beholder = function (pick, game, isDoppleganger) {
@@ -884,12 +889,12 @@ module.exports.beholder = function (pick, game, isDoppleganger) {
     }, isDoppleganger);
 };
 
-module.exports.dopplegangerbeholder = function (pick, game, isDoppleganger) {
+module.exports.dopplegangerbeholder = function (pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         module.exports.beholder(pick, game, true);
     },()=>{
         game.mode = game.order[game.order.indexOf('dopplegangerbeholder') + 1];
-    }, isDoppleganger);
+    });
 };
 
 module.exports.revealer = function (pick, game, isDoppleganger) {
@@ -917,12 +922,12 @@ module.exports.revealer = function (pick, game, isDoppleganger) {
     }, isDoppleganger);
 };
 
-module.exports.dopplegangerrevealer = function (pick, game, isDoppleganger) {
+module.exports.dopplegangerrevealer = function (pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         module.exports.revealer(pick, game, true);
     },()=>{
         game.mode = game.order[game.order.indexOf('dopplegangerrevealer') + 1];
-    }, isDoppleganger);
+    });
 };
 
 module.exports.curator = function (pick, game, artifactToSplice, isDoppleganger) {
@@ -952,11 +957,11 @@ module.exports.curator = function (pick, game, artifactToSplice, isDoppleganger)
     }, isDoppleganger);
 };
 
-module.exports.dopplegangercurator = function (pick, game, isDoppleganger) {
+module.exports.dopplegangercurator = function (pick, game) {
     playerActionOrReady(game, pick, 'doppleganger', ()=>{
         const playerWithArtifact = game._players.find(player => player.artifact);
         module.exports.curator(pick, game, playerWithArtifact && playerWithArtifact._private.artifact, true);
     },()=>{
         game.mode = game.order[game.order.indexOf('dopplegangercurator') + 1];
-    }, isDoppleganger);
+    });
 };
