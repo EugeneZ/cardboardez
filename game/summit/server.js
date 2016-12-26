@@ -268,6 +268,10 @@ module.exports.setup = function (game) {
 };
 
 module.exports.day = function (vote, game) {
+    if (vote.user.id === vote.target) {
+        throwFatalError(vote);
+    }
+
     forPlayer(vote.user.id, player => {
         if (player.vote) {
             forPlayer(player.vote, target => {
