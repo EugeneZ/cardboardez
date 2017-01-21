@@ -11,5 +11,6 @@
 /npm-debug.log
 /public/assets/*
 gamelist.json
+npm-debug.*
 
 !/config/default.json
