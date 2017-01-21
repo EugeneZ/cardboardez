@@ -9,7 +9,7 @@
 /cardboardez.iml
 /node_modules
 /npm-debug.log
-/public/assets/scripts/client.js
-/public/assets/images/trixit
+/public/assets/*
+gamelist.json
 
 !/config/default.json

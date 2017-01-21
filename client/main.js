@@ -1,7 +1,7 @@
 import polyfill from 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import materialui from 'material-ui'; // We import this whole packge (and react) so that it's always available to submodules
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { subscribeAll } from './realtime';
 import { sagaMiddleware, runSagas } from './sagas';

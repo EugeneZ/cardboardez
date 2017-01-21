@@ -1,7 +1,7 @@
 const config = require('config');
 const dbService = require('feathers-rethinkdb');
 const hooks = require('feathers-hooks');
-const gameProvider = require('../../game/gameProvider');
+const gameProvider = require('../gameProvider');
 const authHooks = require('feathers-authentication').hooks;
 const _ = require('lodash');
 
