@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route, browserHistory, IndexRoute } from 'react-router'
 import { Provider } from 'react-redux';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider } from 'material-ui';
 import feathers from './feathers';
 import App from './component/App';
 import GamesList from './component/GamesList';

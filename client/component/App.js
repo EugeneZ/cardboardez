@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import autobind from 'autobind-decorator'
 import { withRouter } from 'react-router';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
+import { AppBar } from 'material-ui';
+import { IconButton }from 'material-ui';
+import { IconMenu } from 'material-ui';
+import { MenuItem } from 'material-ui';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import feathers from '../feathers';
 
@@ -77,7 +77,7 @@ export default withRouter(class App extends Component {
     }
 
     onSendAction(data) {
-        this.props.dispatch({ type: 'GAME_ACTION', data: Object.assign({ id: this.props.params.id }, data ) });
+        this.props.dispatch({ type: 'GAME_ACTION', data: Object.assign({ id: this.props.params.id }, data) });
     }
 
     onPatchProfile(data) {

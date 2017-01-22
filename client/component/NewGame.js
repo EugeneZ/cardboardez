@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
-import Toggle from 'material-ui/Toggle';
+import { TextField } from 'material-ui';
+import { SelectField } from 'material-ui';
+import { MenuItem } from 'material-ui';
+import { RaisedButton } from 'material-ui';
+import { Paper } from 'material-ui';
+import { Toggle } from 'material-ui';
 import autobind from 'autobind-decorator';
 import { getLibrary, getConfiguration } from '../gameProvider';
 import loadRemoteModule from '../hoc/loadRemoteModule';
 
-@loadRemoteModule(()=>({
+@loadRemoteModule(() => ({
     configurations: 'configurations'
 }))
 @autobind

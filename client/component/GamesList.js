@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import autobind from 'autobind-decorator';
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import Toggle from 'material-ui/Toggle';
-import _ from 'lodash';
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui';
+import { Paper } from 'material-ui';
+import { RaisedButton } from 'material-ui';
+import { Toggle } from 'material-ui';
+import castArray from 'lodash/castArray';
+import startCase from 'lodash/startCase';
 
 function getWinnersArray(game, users) {
     const winners = game.winner || game.winners;
@@ -12,7 +13,7 @@ function getWinnersArray(game, users) {
         return [];
     }
 
-    return _.castArray(winners).map(winner => {
+    return castArray(winners).map(winner => {
         if (winner && winner.name) {
             return name;
         } else if (game.players.includes(winner)) {
@@ -35,7 +36,7 @@ export default class GamesList extends Component {
         const games = this.props.games
             .slice()
             .filter(game => !this.state.showCompleted ^ game.mode === 'gameover')
-            .sort((a, b)=>parseInt(b.updated.replace(/[^0-9]/g,''), 10) - parseInt(a.updated.replace(/[^0-9]/g,''), 10));
+            .sort((a, b) => parseInt(b.updated.replace(/[^0-9]/g, ''), 10) - parseInt(a.updated.replace(/[^0-9]/g, ''), 10));
 
         if (!users || !users.length || !games || !games.length) {
             return this.renderNoGames();
@@ -44,7 +45,7 @@ export default class GamesList extends Component {
         return (
             <div>
                 <Toggle label="Show Completed" style={{ margin: 16, width: 200 }} onToggle={this.onToggleCompleted}/>
-                <Table onRowSelection={arr=>onGotoGame(games[arr[0]])}>
+                <Table onRowSelection={arr => onGotoGame(games[arr[0]])}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow>
                             <TableHeaderColumn>Game</TableHeaderColumn>
@@ -56,10 +57,10 @@ export default class GamesList extends Component {
                     <TableBody displayRowCheckbox={false} showRowHover={true} stripedRows={true}>
                         {games.map(game =>
                             <TableRow key={game.id}>
-                                <TableRowColumn>{_.startCase(game.game)}</TableRowColumn>
+                                <TableRowColumn>{startCase(game.game)}</TableRowColumn>
                                 <TableRowColumn>{game.title}</TableRowColumn>
                                 <TableRowColumn>{game.players.map((id, key) => {
-                                    const user = users.filter(p=>p.id == id)[0];
+                                    const user = users.filter(p => p.id == id)[0];
                                     return (
                                         <div key={key}>{user ? user.name : 'Deleted User'}</div>
                                     );
@@ -86,7 +87,8 @@ export default class GamesList extends Component {
             return (
                 <Paper style={{ maxWidth: 500, padding: 10, margin: '0 auto' }}>
                     <p>You don't have any active games. You can create one or view completed games.</p>
-                    <Toggle label="Show Completed" style={{ margin: 16, width: 200 }} onToggle={this.onToggleCompleted} toggled={this.state.showCompleted}/>
+                    <Toggle label="Show Completed" style={{ margin: 16, width: 200 }} onToggle={this.onToggleCompleted}
+                            toggled={this.state.showCompleted}/>
                     <RaisedButton primary={true} label="Create a game" onClick={this.props.onGotoNewGame}/>
                 </Paper>
             );

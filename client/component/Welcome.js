@@ -1,8 +1,8 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import FontIcon from 'material-ui/FontIcon';
+import { RaisedButton } from 'material-ui';
+import { FontIcon } from 'material-ui';
 
-export default ()=>
+export default () =>
     <div style={{ padding: '5%' }}>
         <div style={{ display: 'flex', marginBottom: 50, flexWrap: 'wrap' }}>
             <RaisedButton primary={true} label="Login with Google" href="/auth/google"

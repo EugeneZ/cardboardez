@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import autobind from 'autobind-decorator';
-import Paper from 'material-ui/Paper';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import feathers from '../feathers';
+import { Paper } from 'material-ui';
+import { TextField } from 'material-ui';
+import { RaisedButton } from 'material-ui';
 
 function getMyName(props) {
     const me = props.user;
