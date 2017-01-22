@@ -1,30 +1,25 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { getPlayArea } from '../gameProvider';
-import loadRemoteModule from '../hoc/loadRemoteModule';
+import renderAfterModuleLoaded from '../hoc/renderAfterModuleLoaded';
+import { getCurrentGame } from '../selectors/games';
 
-const mapPropsToModuleNames = props => ({
-    playarea: props.games && props.games.length && props.games.find(game => game.id === props.params.id).game + '/client'
-});
-
-@loadRemoteModule(mapPropsToModuleNames)
+@connect((state, props) => ({
+    game: getCurrentGame(state, props),
+}))
+@renderAfterModuleLoaded(({ game }) => game ? [`/assets/scripts/games/${game.game}/client.js`] : [])
 export default class PlayArea extends PureComponent {
     render() {
-        const { games, params, playarea } = this.props;
-        if (!games || !games.length || !playarea) {
+        const { game } = this.props;
+
+        if (!game) {
             return null;
         }
 
-        const game = games.filter(game => game.id === params.id)[0];
-
-        if (!game) {
-            return <div>Game not allowed</div>;
-        }
-
         const PlayArea = getPlayArea(game.game);
-        if (PlayArea) {
-            return React.createElement(PlayArea, this.props);
-        } else {
-            return "Loading module...";
-        }
+
+        return <PlayArea
+            game={game}
+        />;
     }
 }

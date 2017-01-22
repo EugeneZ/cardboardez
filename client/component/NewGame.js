@@ -6,16 +6,30 @@ import { RaisedButton } from 'material-ui';
 import { Paper } from 'material-ui';
 import { Toggle } from 'material-ui';
 import autobind from 'autobind-decorator';
+import { connect } from 'react-redux';
 import { getLibrary, getConfiguration } from '../gameProvider';
-import loadRemoteModule from '../hoc/loadRemoteModule';
+import renderAfterModuleLoaded from '../hoc/renderAfterModuleLoaded';
+import { topLevelPaperContainer } from '../styles';
 
-@loadRemoteModule(() => ({
-    configurations: 'configurations'
+const styles = {
+    container: {
+        ...topLevelPaperContainer,
+    },
+    newGameButtonContainer: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+    },
+};
+
+@connect(state => ({
+    user: state.user,
+    users: state.users,
 }))
+@renderAfterModuleLoaded(() => ['/assets/scripts/games/configurations.js'])
 @autobind
 export default class NewGame extends Component {
     state = {
-        game: null,
+        gameName: null,
         title: this.props.user.name + '\'s Game',
         players: [this.props.user.id],
         dirtyTitle: false,
@@ -23,29 +37,44 @@ export default class NewGame extends Component {
     };
 
     render() {
-        const { game, title, players, dirtyTitle } = this.state;
+        const { gameName, title, players, dirtyTitle, options } = this.state;
 
-        const config = game && getConfiguration(game);
-
-        if (!this.props.configurations) {
-            return <div>Loading</div>;
-        }
+        const config = gameName && getConfiguration(gameName, options, players.length);
 
         return (
-            <Paper style={{ maxWidth: 500, padding: 10, margin: '0 auto' }}>
-                <SelectField value={game} floatingLabelText="Select Game" onChange={this.onChangeGame} fullWidth={true}>
-                    {getLibrary().map(name => <MenuItem key={name} value={name}
-                                                        primaryText={getConfiguration(name).name}/>)}
+            <Paper style={styles.container}>
+                <SelectField
+                    value={gameName}
+                    floatingLabelText="Select Game"
+                    onChange={this.onChangeGame}
+                    fullWidth={true}
+                >
+                    {getLibrary().map(name =>
+                        <MenuItem
+                            key={name}
+                            value={name}
+                            primaryText={getConfiguration(name).name}
+                        />
+                    )}
                 </SelectField>
-                <TextField floatingLabelText="Game Title" value={title} onChange={this.onChangeTitle} fullWidth={true}
-                           errorText={dirtyTitle && !title.length && 'You must set a title'}/>
-                {game && this.renderPlayers(config)}
-                {game && this.renderOptions(game)}
-                {game && title && players.length >= config.minPlayers &&
-                <RaisedButton label="Create Game" onTouchTap={() => this.onClickCreateGame(config)}
-                              style={{ float: 'right' }}
-                              primary={true}/> }
-                <div style={{ clear: 'both' }}>&nbsp;</div>
+                <TextField
+                    floatingLabelText="Game Title"
+                    value={title}
+                    onChange={this.onChangeTitle}
+                    fullWidth={true}
+                    errorText={dirtyTitle && !title.length && 'You must set a title'}
+                />
+                {gameName && this.renderPlayers(config)}
+                {gameName && this.renderOptions(gameName)}
+                {gameName && title && players.length >= config.minPlayers &&
+                    <div style={styles.newGameButtonContainer}>
+                        <RaisedButton
+                            label="Create Game"
+                            onTouchTap={this.onClickCreateGame.bind(this, config)}
+                            primary={true}
+                        />
+                    </div>
+                }
             </Paper>
         );
     }
@@ -59,14 +88,17 @@ export default class NewGame extends Component {
         for (let i = 0; i < maxPlayers; i++) {
             if (players[i - 1] || i < minPlayers) {
                 retval.push(
-                    <SelectField key={i} value={players[i]} floatingLabelText={`Player ${i + 1}`}
-                                 onChange={this.onChangePlayer.bind(this, i)} fullWidth={true}
-                                 errorText={!players[i] && i < minPlayers && 'This player is required'}>
-
+                    <SelectField
+                        key={i}
+                        value={players[i]}
+                        floatingLabelText={`Player ${i + 1}`}
+                        onChange={this.onChangePlayer.bind(this, i)}
+                        fullWidth={true}
+                        errorText={!players[i] && i < minPlayers && 'This player is required'}
+                    >
                         {this.props.users
                             .filter(user => user.id === players[i] || players.indexOf(user.id) === -1)
                             .map(player => <MenuItem key={player.id} value={player.id} primaryText={player.name}/>)}
-
                     </SelectField>
                 );
             }
@@ -115,21 +147,21 @@ export default class NewGame extends Component {
         });
     }
 
-    onChangeGame(ev, i, value) {
-        this.setState({ game: value });
+    onChangeGame(ev, i, gameName) {
+        this.setState({ gameName });
     }
 
-    onChangeTitle(ev) {
+    onChangeTitle({ target: { value: title } }) {
         this.setState({
-            title: ev.target.value,
+            title,
             dirtyTitle: true
         });
     }
 
-    onChangePlayer(i, ev, key, value) {
+    onChangePlayer(index, ev, key, value) {
         const newPlayers = this.state.players.slice();
-        newPlayers[i] = value;
-        this.setState({ players: newPlayers.filter(p => p) });
+        newPlayers[index] = value;
+        this.setState({ players: newPlayers.filter(player => player) });
     }
 
     onChangeOption(option, value) {
@@ -142,8 +174,8 @@ export default class NewGame extends Component {
     }
 
     onClickCreateGame(config) {
-        const { game, title, options } = this.state;
-        const players = this.state.players.filter(p => p);
+        const { gameName: game, title, options } = this.state;
+        const players = this.state.players.filter(player => player);
 
         this.setState({ dirtyTitle: true });
 
@@ -153,11 +185,14 @@ export default class NewGame extends Component {
             return;
         }
 
-        this.props.onNewGame({
-            game,
-            title,
-            players,
-            options
+        this.props.dispatch({
+            type: 'CREATE_GAME',
+            data: {
+                game,
+                title,
+                players,
+                options,
+            }
         });
     }
 }

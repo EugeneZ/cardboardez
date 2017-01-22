@@ -1,16 +1,32 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import autobind from 'autobind-decorator';
 import { Paper } from 'material-ui';
 import { TextField } from 'material-ui';
 import { RaisedButton } from 'material-ui';
+import { connect } from 'react-redux';
+import { currentUser } from '../selectors/users';
+import { topLevelPaperContainer } from '../styles';
+
+const styles = {
+    container: {
+        ...topLevelPaperContainer,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'baseline',
+        flexWrap: 'wrap',
+    },
+};
 
 function getMyName(props) {
     const me = props.user;
     return me && me.name;
 }
 
+@connect(state => ({
+    user: currentUser(state)
+}))
 @autobind
-export default class Profile extends Component {
+export default class Profile extends PureComponent {
     state = {
         name: getMyName(this.props)
     };
@@ -24,32 +40,38 @@ export default class Profile extends Component {
     }
 
     render() {
-        if (!this.state.name) {
+        if (!this.props.user) {
             return null;
         }
 
         return (
-            <Paper style={{ maxWidth: 500, padding: 10, margin: '0 auto' }}>
-                <TextField floatingLabelText="Your Name" value={this.state.name} onChange={this.onChangeName}
-                           fullWidth={true}/>
-                <RaisedButton label="Update Profile" onTouchTap={this.onClickSubmit} style={{ float: 'right' }}
-                              primary={true}/>
-                <div style={{ clear: 'both' }}>&nbsp;</div>
+            <Paper style={styles.container}>
+                <TextField
+                    floatingLabelText="Your Name"
+                    value={this.state.name}
+                    onChange={this.onChangeName}
+                />
+                <RaisedButton
+                    label="Update Profile"
+                    onTouchTap={this.onClickSubmit}
+                    primary={true}
+                />
             </Paper>
         )
     }
 
-    onChangeName(e) {
-        this.setState({ name: e.target.value });
+    onChangeName({ target: { value: name } }) {
+        this.setState({ name });
     }
 
     onClickSubmit() {
         const { name } = this.state;
+
         if (!name || name.length < 2) {
             this.setState({ nameError: 'Your name must be at least two characters' });
             return;
         }
 
-        this.props.onPatchProfile({ name });
+        this.props.dispatch({ type: 'PATCH_PROFILE', data: { name } });
     }
 }

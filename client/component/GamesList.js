@@ -1,11 +1,23 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import autobind from 'autobind-decorator';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui';
 import { Paper } from 'material-ui';
 import { RaisedButton } from 'material-ui';
 import { Toggle } from 'material-ui';
 import castArray from 'lodash/castArray';
-import startCase from 'lodash/startCase';
+import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
+import { topLevelPaperContainer } from '../styles';
+import { getConfiguration } from '../gameProvider';
+import renderAfterModuleLoaded from '../hoc/renderAfterModuleLoaded';
+
+const styles = {
+    emptyTableContainer: topLevelPaperContainer,
+    completedGamesToggle: {
+        margin: 16,
+        width: 200
+    }
+};
 
 function getWinnersArray(game, users) {
     const winners = game.winner || game.winners;
@@ -17,26 +29,35 @@ function getWinnersArray(game, users) {
         if (winner && winner.name) {
             return name;
         } else if (game.players.includes(winner)) {
-            const player = users.find(player => player.id === winners);
-            return player || 'Deleted User';
+            const player = users.find(player => player.id === winner);
+            return (player && player.name) || 'Deleted User';
         } else {
             return winner;
         }
     });
 }
 
+function getTimeGameUpdatedAsNumber(game) {
+    return parseInt(game.updated.replace(/[^0-9]/g, ''), 10);
+}
+
+@connect(state => ({
+    games: state.games,
+    users: state.users,
+}))
+@renderAfterModuleLoaded(() => ['/assets/scripts/games/configurations.js'])
 @autobind
-export default class GamesList extends Component {
+export default class GamesList extends PureComponent {
     state = {
         showCompleted: false
     };
 
     render() {
-        const { users, onGotoGame } = this.props;
+        const { users } = this.props;
+        const { showCompleted } = this.state;
         const games = this.props.games
-            .slice()
-            .filter(game => !this.state.showCompleted ^ game.mode === 'gameover')
-            .sort((a, b) => parseInt(b.updated.replace(/[^0-9]/g, ''), 10) - parseInt(a.updated.replace(/[^0-9]/g, ''), 10));
+            .filter(game => !showCompleted ^ game.mode === 'gameover')
+            .sort((a, b) => getTimeGameUpdatedAsNumber(b) - getTimeGameUpdatedAsNumber(a));
 
         if (!users || !users.length || !games || !games.length) {
             return this.renderNoGames();
@@ -44,29 +65,34 @@ export default class GamesList extends Component {
 
         return (
             <div>
-                <Toggle label="Show Completed" style={{ margin: 16, width: 200 }} onToggle={this.onToggleCompleted}/>
-                <Table onRowSelection={arr => onGotoGame(games[arr[0]])}>
+                <Toggle label="Show Completed" style={styles.completedGamesToggle} onToggle={this.onToggleCompleted}/>
+                <Table onRowSelection={this.onClickTableRow.bind(this, games)}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow>
                             <TableHeaderColumn>Game</TableHeaderColumn>
                             <TableHeaderColumn>Title</TableHeaderColumn>
                             <TableHeaderColumn>Players</TableHeaderColumn>
-                            {this.state.showCompleted && <TableHeaderColumn>Winner(s)</TableHeaderColumn>}
+                            {showCompleted && <TableHeaderColumn>Winner(s)</TableHeaderColumn>}
                         </TableRow>
                     </TableHeader>
                     <TableBody displayRowCheckbox={false} showRowHover={true} stripedRows={true}>
                         {games.map(game =>
                             <TableRow key={game.id}>
-                                <TableRowColumn>{startCase(game.game)}</TableRowColumn>
+                                <TableRowColumn>{getConfiguration(game.game).name}</TableRowColumn>
                                 <TableRowColumn>{game.title}</TableRowColumn>
                                 <TableRowColumn>{game.players.map((id, key) => {
-                                    const user = users.filter(p => p.id == id)[0];
+                                    const user = users.find(player => player.id == id);
                                     return (
                                         <div key={key}>{user ? user.name : 'Deleted User'}</div>
                                     );
                                 })}</TableRowColumn>
-                                { this.state.showCompleted && <TableRowColumn>{getWinnersArray(game).map(w => <div
-                                    key={w}>{w}</div>)}</TableRowColumn>}
+                                {showCompleted &&
+                                    <TableRowColumn>
+                                        {getWinnersArray(game, users).map(
+                                            winner => <div key={winner}>{winner}</div>
+                                        )}
+                                    </TableRowColumn>
+                                }
                             </TableRow>
                         )}
                     </TableBody>
@@ -76,26 +102,50 @@ export default class GamesList extends Component {
     }
 
     renderNoGames() {
+        const { showCompleted } = this.state;
+        const newGameButton = (
+            <RaisedButton
+                primary={true}
+                label="Start a game"
+                onClick={this.onClickNewGame}
+            />);
+
         if (!this.props.games || !this.props.games.length) {
             return (
-                <Paper style={{ maxWidth: 500, padding: 10, margin: '0 auto' }}>
-                    <p>Welcome to CardboardEZ. Get started by creating your first game.</p>
-                    <RaisedButton primary={true} label="Create a game" onClick={this.props.onGotoNewGame}/>
+                <Paper style={styles.emptyTableContainer}>
+                    <p>Welcome to CardboardEZ. Get started with your first game.</p>
+                    {newGameButton}
                 </Paper>
             );
         } else {
             return (
-                <Paper style={{ maxWidth: 500, padding: 10, margin: '0 auto' }}>
-                    <p>You don't have any active games. You can create one or view completed games.</p>
-                    <Toggle label="Show Completed" style={{ margin: 16, width: 200 }} onToggle={this.onToggleCompleted}
-                            toggled={this.state.showCompleted}/>
-                    <RaisedButton primary={true} label="Create a game" onClick={this.props.onGotoNewGame}/>
+                <Paper style={styles.emptyTableContainer}>
+                    <p>You don't have any {showCompleted ? 'completed' : 'active'} games.</p>
+                    <Toggle
+                        label={`Show ${showCompleted ? 'Active' : 'Completed'}`}
+                        style={styles.completedGamesToggle}
+                        onToggle={this.onToggleCompleted}
+                        toggled={this.state.showCompleted}
+                    />
+                    {newGameButton}
                 </Paper>
             );
         }
     }
 
+    onClickTableRow(games, [index]) {
+        this.onGotoGame(games[index]);
+    }
+
     onToggleCompleted() {
         this.setState({ showCompleted: !this.state.showCompleted });
+    }
+
+    onGotoGame({ id }) {
+        browserHistory.push({ pathname: `/game/${id}` });
+    }
+
+    onClickNewGame() {
+        browserHistory.push({ pathname: '/new' });
     }
 };

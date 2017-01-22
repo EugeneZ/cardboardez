@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { RaisedButton } from 'material-ui';
 import { FontIcon } from 'material-ui';
 
-export default () =>
-    <div style={{ padding: '5%' }}>
-        <div style={{ display: 'flex', marginBottom: 50, flexWrap: 'wrap' }}>
-            <RaisedButton primary={true} label="Login with Google" href="/auth/google"
-                          icon={<FontIcon className="fa fa-google"/>} style={{ margin: '10px auto' }}/>
-            <RaisedButton primary={true} label="Login with Facebook" href="/auth/facebook"
-                          icon={<FontIcon className="fa fa-facebook"/>} style={{ margin: '10px auto' }}/>
-            <RaisedButton primary={true} label="Login with Github" href="/auth/github"
-                          icon={<FontIcon className="fa fa-github"/>} style={{ margin: '10px auto' }}/>
-            <RaisedButton primary={true} label="Login with Vimeo" href="/auth/vimeo"
-                          icon={<FontIcon className="fa fa-vimeo"/>} style={{ margin: '10px auto' }}/>
-        </div>
-    </div>;
+const styles = {
+    container: {
+        padding: '5%',
+        display: 'flex',
+        marginBottom: 50,
+        flexWrap: 'wrap',
+    },
+    loginButton: {
+        margin: '10px auto',
+    },
+};
+
+export default class Welcome extends PureComponent {
+    render() {
+        return (
+            <div style={styles.container}>
+                {['Google', 'Facebook', 'Github', 'Vimeo'].map(provider =>
+                    <RaisedButton
+                        primary={true}
+                        label={`Login with ${provider}`}
+                        href={`/auth/${provider.toLowerCase()}`}
+                        icon={<FontIcon className={`fa fa-${provider.toLowerCase()}`}/>}
+                        style={styles.loginButton}
+                    />
+                )}
+            </div>
+        );
+    }
+}
