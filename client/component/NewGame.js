@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { TextField } from 'material-ui';
 import { SelectField } from 'material-ui';
 import { MenuItem } from 'material-ui';
@@ -27,7 +27,7 @@ const styles = {
 }))
 @renderAfterModuleLoaded(() => ['/assets/scripts/games/configurations.js'])
 @autobind
-export default class NewGame extends Component {
+export default class NewGame extends PureComponent {
     state = {
         gameName: null,
         title: this.props.user.name + '\'s Game',

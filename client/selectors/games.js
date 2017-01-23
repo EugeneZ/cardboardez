@@ -43,3 +43,10 @@ export const getCurrentPlayerFromCurrentGame = createSelector(
 
     (currentGame, user) => currentGame && currentGame._players && user && user.id && currentGame._players.find(player => player.id === user.id)
 );
+
+export const getNewGames = createSelector(
+    state => state.games,
+    (state, props) => props.params && props.params.id,
+
+    (games, currentGameId) => games.filter(game => game.createdRealtime && !game.createdByMe && game.id !== currentGameId)
+);

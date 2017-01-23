@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 import autobind from 'autobind-decorator'
 import { AppBar } from 'material-ui';
@@ -8,14 +8,17 @@ import { MenuItem } from 'material-ui';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import { browserHistory } from 'react-router';
 import { currentUser } from '../selectors/users';
+import { getNewGames } from '../selectors/games';
+import NewGameNotifications from './NewGameNotifications';
 
-@connect(state => ({
-    user: currentUser(state)
+@connect((state, props) => ({
+    user: currentUser(state),
+    newGames: getNewGames(state, props)
 }))
 @autobind
-export default class App extends Component {
+export default class App extends PureComponent {
     render() {
-        const { user, children } = this.props;
+        const { user, newGames, children } = this.props;
 
         return (
             <div>
@@ -24,6 +27,7 @@ export default class App extends Component {
                     showMenuIconButton={false}
                     iconElementRight={this.renderRightAppBarIcon()}
                 />
+                <NewGameNotifications games={newGames} onGotoGame={this.onGotoGame}/>
                 {children}
             </div>
         )
@@ -61,5 +65,9 @@ export default class App extends Component {
 
     onClickProfile() {
         browserHistory.push({ pathname: '/profile' });
+    }
+
+    onGotoGame(id) {
+        browserHistory.push({ pathname: `/game/${id}` });
     }
 }
