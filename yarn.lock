@@ -28,7 +28,7 @@ acorn@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-2.7.0.tgz#ab6e7d9d886aaca8b085bc3312b79a198433f0e7"
 
-acorn@^3.0.0, acorn@^3.1.0:
+acorn@^3.1.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-3.3.0.tgz#45e37fb39e8da3f25baee3ff5369e2bb5f22017a"
 
@@ -122,7 +122,7 @@ arrify@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
-asap@^2.0.3, asap@~2.0.3:
+asap@~2.0.3:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.5.tgz#522765b50c3510490e52d7dcfe085ef9ba96958f"
 
@@ -1014,7 +1014,7 @@ browser-pack@^6.0.1:
     through2 "^2.0.0"
     umd "^3.0.0"
 
-browser-resolve@^1.11.0, browser-resolve@^1.7.0, browser-resolve@^1.9.1:
+browser-resolve@^1.11.0, browser-resolve@^1.7.0:
   version "1.11.2"
   resolved "https://registry.yarnpkg.com/browser-resolve/-/browser-resolve-1.11.2.tgz#8ff09b0a2c421718a1051c260b32e48f442938ce"
   dependencies:
@@ -1072,13 +1072,6 @@ browserify-sign@^4.0.0:
     elliptic "^6.0.0"
     inherits "^2.0.1"
     parse-asn1 "^5.0.0"
-
-browserify-transform-tools@^1.6.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/browserify-transform-tools/-/browserify-transform-tools-1.7.0.tgz#83e277221f63259bed2e7eb2a283a970a501f4c4"
-  dependencies:
-    falafel "^2.0.0"
-    through "^2.3.7"
 
 browserify-zlib@~0.1.2:
   version "0.1.4"
@@ -1182,9 +1175,9 @@ camelcase@^1.0.2:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-1.2.1.tgz#9bb5304d2e0b56698b2c758b08a3eaa9daa58a39"
 
-cardboardez-game-nicknames@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/cardboardez-game-nicknames/-/cardboardez-game-nicknames-0.0.1.tgz#03b799333efe26cd4764d02ea87385e23cb3887d"
+cardboardez-game-nicknames@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/cardboardez-game-nicknames/-/cardboardez-game-nicknames-0.0.2.tgz#6bcf6f108295caa0b2c3be8a17359fd2cc8ea9d4"
   dependencies:
     autobind-decorator "^1.3.4"
     babel-plugin-transform-decorators-legacy "^1.3.4"
@@ -1197,9 +1190,9 @@ cardboardez-game-nicknames@^0.0.1:
     react "^15.4.2"
     react-dom "^15.4.2"
 
-cardboardez-game-summit@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/cardboardez-game-summit/-/cardboardez-game-summit-0.0.2.tgz#a89476ce7c06699f9038e4cc6ee42ab4b7bb4d80"
+cardboardez-game-summit@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/cardboardez-game-summit/-/cardboardez-game-summit-0.0.4.tgz#1620d219388058fdd20bd89eef719caf1ffac1a6"
   dependencies:
     autobind-decorator "^1.3.4"
     babel-plugin-transform-decorators-legacy "^1.3.4"
@@ -1213,9 +1206,9 @@ cardboardez-game-summit@^0.0.2:
     react "^15.4.2"
     react-dom "^15.4.2"
 
-cardboardez-game-trixit@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/cardboardez-game-trixit/-/cardboardez-game-trixit-0.0.1.tgz#d080b32a97596fb79e719e6366066c8add369208"
+cardboardez-game-trixit@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/cardboardez-game-trixit/-/cardboardez-game-trixit-0.0.2.tgz#a810a6f3060371f90a3ebbc3f60ac9de04650951"
   dependencies:
     autobind-decorator "^1.3.4"
     babel-plugin-transform-decorators-legacy "^1.3.4"
@@ -1314,7 +1307,7 @@ coffee-script@~1.8.0:
   dependencies:
     mkdirp "~0.3.5"
 
-combine-source-map@^0.7.1, combine-source-map@~0.7.1:
+combine-source-map@~0.7.1:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/combine-source-map/-/combine-source-map-0.7.2.tgz#0870312856b307a87cc4ac486f3a9a62aeccc09e"
   dependencies:
@@ -1497,10 +1490,6 @@ crypto-browserify@^3.0.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
 
-crypto-js@^3.1.6:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.1.8.tgz#715f070bf6014f2ae992a98b3929258b713f08d5"
-
 cson@~1.6.0:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/cson/-/cson-1.6.2.tgz#fae7b13da1ceb077de2afdba8630c6790325f459"
@@ -1580,15 +1569,6 @@ depd@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.0.tgz#e1bd82c6aab6ced965b97b88b17ed3e528ca18c3"
 
-deps-sort@^1.3.9:
-  version "1.3.9"
-  resolved "https://registry.yarnpkg.com/deps-sort/-/deps-sort-1.3.9.tgz#29dfff53e17b36aecae7530adbbbf622c2ed1a71"
-  dependencies:
-    JSONStream "^1.0.3"
-    shasum "^1.0.0"
-    subarg "^1.0.0"
-    through2 "^1.0.0"
-
 deps-sort@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/deps-sort/-/deps-sort-2.0.0.tgz#091724902e84658260eb910748cccd1af6e21fb5"
@@ -1629,19 +1609,6 @@ diffie-hellman@^5.0.0:
     bn.js "^4.1.0"
     miller-rabin "^4.0.0"
     randombytes "^2.0.0"
-
-disposables@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/disposables/-/disposables-1.0.1.tgz#064727a25b54f502bd82b89aa2dfb8df9f1b39e3"
-
-dnd-core@^2.0.1:
-  version "2.0.2"
-  resolved "http://registry.npmjs.org/dnd-core/-/dnd-core-2.0.2.tgz#4528da4fbeb1abb6c308414b2d2e8389f3514646"
-  dependencies:
-    asap "^2.0.3"
-    invariant "^2.0.0"
-    lodash "^4.2.0"
-    redux "^3.2.0"
 
 domain-browser@~1.1.0:
   version "1.1.7"
@@ -1695,10 +1662,6 @@ elliptic@^6.0.0:
     brorand "^1.0.1"
     hash.js "^1.0.0"
     inherits "^2.0.1"
-
-empty-module@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/empty-module/-/empty-module-0.0.2.tgz#13b4dd8d4afeddd35e50c18dcd788c51087f1545"
 
 encodeurl@~1.0.1:
   version "1.0.1"
@@ -1933,15 +1896,6 @@ extract-opts@~2.2.0:
 extsprintf@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.0.2.tgz#e1080e0658e300b06294990cc70e1502235fd550"
-
-falafel@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/falafel/-/falafel-2.0.0.tgz#757d47c53598203bedc55dc2f8015f43b82d58b0"
-  dependencies:
-    acorn "^3.0.0"
-    foreach "^2.0.5"
-    isarray "0.0.1"
-    object-keys "^1.0.6"
 
 fbjs@^0.8.1, fbjs@^0.8.4, fbjs@^0.8.6:
   version "0.8.8"
@@ -2408,7 +2362,7 @@ insert-module-globals@^7.0.0:
     through2 "^2.0.0"
     xtend "^4.0.0"
 
-invariant@^2.0.0, invariant@^2.1.0, invariant@^2.1.1, invariant@^2.2.0, invariant@^2.2.1:
+invariant@^2.0.0, invariant@^2.2.0, invariant@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.2.tgz#9e1f56ac0acdb6bf303306f338be3b204ae60360"
   dependencies:
@@ -3090,7 +3044,7 @@ object-inspect@~1.2.1:
   version "1.2.1"
   resolved "http://registry.npmjs.org/object-inspect/-/object-inspect-1.2.1.tgz#3b62226eb8f6d441751c7d8f22a20ff80ac9dc3f"
 
-object-keys@^1.0.6, object-keys@^1.0.8:
+object-keys@^1.0.8:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.0.11.tgz#c54601778ad560f1142ce0e01bcca8b56d13426d"
 
@@ -3215,17 +3169,6 @@ parseuri@0.0.5:
 parseurl@~1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.1.tgz#c8ab8c9223ba34888aa64a297b28853bec18da56"
-
-partition-bundle@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/partition-bundle/-/partition-bundle-2.5.0.tgz#2198caf63a4856e1d01177dd7f5714f1e91abd32"
-  dependencies:
-    browser-resolve "^1.9.1"
-    combine-source-map "^0.7.1"
-    deps-sort "^1.3.9"
-    mkdirp "^0.5.1"
-    object-assign "^3.0.0"
-    through2 "^2.0.0"
 
 passport-facebook@^1.0.3:
   version "1.0.3"
@@ -3479,28 +3422,6 @@ react-deep-force-update@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.0.1.tgz#f911b5be1d2a6fe387507dd6e9a767aa2924b4c7"
 
-react-dnd-html5-backend@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-2.1.2.tgz#bcff5866629c335b310b1062fe6537af35073c66"
-  dependencies:
-    lodash "^4.2.0"
-
-react-dnd-touch-backend@^0.3.3:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/react-dnd-touch-backend/-/react-dnd-touch-backend-0.3.5.tgz#f5db2b550f14265b3d9aa0a1f847c56e4c67a4d9"
-  dependencies:
-    invariant "^2.1.1"
-    react-dnd "^2.0.0"
-
-react-dnd@^2.0.0, react-dnd@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-2.1.4.tgz#dd2afeddddd5ff4507d795a5bd44361c84374c0f"
-  dependencies:
-    disposables "^1.0.1"
-    dnd-core "^2.0.1"
-    invariant "^2.1.0"
-    lodash "^4.2.0"
-
 react-dom@^15.4.2:
   version "15.4.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.2.tgz#015363f05b0a1fd52ae9efdd3a0060d90695208f"
@@ -3570,15 +3491,6 @@ read-only-stream@^2.0.0:
   dependencies:
     readable-stream "^2.0.2"
 
-"readable-stream@>=1.1.13-1 <1.2.0-0":
-  version "1.1.14"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.1.14.tgz#7cf4c54ef648e3813084c636dd2079e166c081d9"
-  dependencies:
-    core-util-is "~1.0.0"
-    inherits "~2.0.1"
-    isarray "0.0.1"
-    string_decoder "~0.10.x"
-
 readable-stream@^2.0.0, "readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.2, readable-stream@^2.1.0, readable-stream@^2.1.5:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.2.tgz#a9e6fec3c7dda85f8bb1b3ba7028604556fc825e"
@@ -3636,7 +3548,7 @@ redux-saga@^0.11.1:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/redux-saga/-/redux-saga-0.11.1.tgz#dc2023d059af0b91c0b1b4febce21194b67d5a58"
 
-redux@^3.2.0, redux@^3.6.0:
+redux@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/redux/-/redux-3.6.0.tgz#887c2b3d0b9bd86eca2be70571c27654c19e188d"
   dependencies:
@@ -3736,13 +3648,6 @@ request@^2.79.0:
     tough-cookie "~2.3.0"
     tunnel-agent "~0.4.1"
     uuid "^3.0.0"
-
-require-globify@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/require-globify/-/require-globify-1.4.1.tgz#5b17fa59ca32524264fd3d22d3e40d94feaa4458"
-  dependencies:
-    browserify-transform-tools "^1.6.0"
-    glob "^7.0.5"
 
 requirefresh@~1.1.2:
   version "1.1.2"
@@ -4131,14 +4036,7 @@ through2@2.0.3, through2@^2.0.0:
     readable-stream "^2.1.5"
     xtend "~4.0.1"
 
-through2@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/through2/-/through2-1.1.1.tgz#0847cbc4449f3405574dbdccd9bb841b83ac3545"
-  dependencies:
-    readable-stream ">=1.1.13-1 <1.2.0-0"
-    xtend ">=4.0.0 <4.1.0-0"
-
-through@2, "through@>=2.2.7 <3", through@^2.3.7, through@~2.3, through@~2.3.1, through@~2.3.4, through@~2.3.8:
+through@2, "through@>=2.2.7 <3", through@~2.3, through@~2.3.1, through@~2.3.4, through@~2.3.8:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
@@ -4409,7 +4307,7 @@ xmlhttprequest-ssl@1.5.3:
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/xmlhttprequest-ssl/-/xmlhttprequest-ssl-1.5.3.tgz#185a888c04eca46c3e4070d99f7b49de3528992d"
 
-"xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1:
+xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
 
