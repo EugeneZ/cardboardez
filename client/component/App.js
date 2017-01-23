@@ -62,8 +62,4 @@ export default class App extends Component {
     onClickProfile() {
         browserHistory.push({ pathname: '/profile' });
     }
-
-    onSendAction(data) {
-        this.props.dispatch({ type: 'GAME_ACTION', data: { id: this.props.params.id, ...data }});
-    }
 }

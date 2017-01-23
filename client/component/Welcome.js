@@ -20,6 +20,7 @@ export default class Welcome extends PureComponent {
             <div style={styles.container}>
                 {['Google', 'Facebook', 'Github', 'Vimeo'].map(provider =>
                     <RaisedButton
+                        key={provider}
                         primary={true}
                         label={`Login with ${provider}`}
                         href={`/auth/${provider.toLowerCase()}`}

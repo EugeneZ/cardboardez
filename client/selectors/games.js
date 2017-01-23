@@ -36,3 +36,10 @@ export const getCurrentGame = createSelector(
 
     (games, gameId, users) => getGameWithRelationships(games.find(game => game.id === gameId), { users })
 );
+
+export const getCurrentPlayerFromCurrentGame = createSelector(
+    getCurrentGame,
+    state => state.user,
+
+    (currentGame, user) => currentGame && currentGame._players && user && user.id && currentGame._players.find(player => player.id === user.id)
+);
