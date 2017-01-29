@@ -222,7 +222,7 @@ export default class NewGame extends PureComponent {
                 type: 'CREATE_GAME',
                 data: gameData
             }),
-            error => this.setState({ error })
+            error => this.setState({ error: error ? error.message || error.toString() : 'Error' })
         );
     }
 }
