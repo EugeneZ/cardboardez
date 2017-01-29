@@ -1175,52 +1175,29 @@ camelcase@^1.0.2:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-1.2.1.tgz#9bb5304d2e0b56698b2c758b08a3eaa9daa58a39"
 
-cardboardez-game-nicknames@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/cardboardez-game-nicknames/-/cardboardez-game-nicknames-0.0.2.tgz#6bcf6f108295caa0b2c3be8a17359fd2cc8ea9d4"
+cardboardez-game-nicknames@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/cardboardez-game-nicknames/-/cardboardez-game-nicknames-0.0.3.tgz#51d77e127a0e914c424fff4a428a63a4fe034730"
   dependencies:
     autobind-decorator "^1.3.4"
-    babel-plugin-transform-decorators-legacy "^1.3.4"
-    babel-plugin-transform-function-bind "^6.8.0"
-    babel-preset-latest "^6.14.0"
-    babel-preset-react "^6.11.1"
-    babel-preset-stage-0 "^6.5.0"
     lodash "^4.16.2"
-    material-ui "^0.16.7"
-    react "^15.4.2"
-    react-dom "^15.4.2"
 
-cardboardez-game-summit@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/cardboardez-game-summit/-/cardboardez-game-summit-0.0.4.tgz#1620d219388058fdd20bd89eef719caf1ffac1a6"
+cardboardez-game-summit@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/cardboardez-game-summit/-/cardboardez-game-summit-0.0.5.tgz#6dfd7e8c8df3bc02a879a4dde9dfada1f6029f44"
   dependencies:
     autobind-decorator "^1.3.4"
-    babel-plugin-transform-decorators-legacy "^1.3.4"
-    babel-plugin-transform-function-bind "^6.8.0"
-    babel-preset-latest "^6.14.0"
-    babel-preset-react "^6.11.1"
-    babel-preset-stage-0 "^6.5.0"
     lodash "^4.16.2"
-    material-ui "^0.16.7"
     moment "^2.17.1"
-    react "^15.4.2"
-    react-dom "^15.4.2"
 
-cardboardez-game-trixit@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/cardboardez-game-trixit/-/cardboardez-game-trixit-0.0.2.tgz#a810a6f3060371f90a3ebbc3f60ac9de04650951"
+cardboardez-game-trixit@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/cardboardez-game-trixit/-/cardboardez-game-trixit-0.0.5.tgz#5fa2c87dcecb27571a3076abe8304adc1ce3686a"
   dependencies:
     autobind-decorator "^1.3.4"
-    babel-plugin-transform-decorators-legacy "^1.3.4"
-    babel-plugin-transform-function-bind "^6.8.0"
-    babel-preset-latest "^6.14.0"
-    babel-preset-react "^6.11.1"
-    babel-preset-stage-0 "^6.5.0"
     hammerjs "^2.0.8"
+    imgur "^0.2.0"
     lodash "^4.16.2"
-    material-ui "^0.16.7"
-    react "^15.4.2"
-    react-dom "^15.4.2"
 
 caseless@~0.11.0:
   version "0.11.0"
@@ -1322,7 +1299,7 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.9.0:
+commander@^2.3.0, commander@^2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.9.0.tgz#9c99094176e12240cb22d6c5146098400fe0f7d4"
   dependencies:
@@ -2149,6 +2126,15 @@ glob-parent@^2.0.0:
   dependencies:
     is-glob "^2.0.0"
 
+glob@^4.0.5:
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-4.5.3.tgz#c6cb73d3226c1efef04de3c56d012f03377ee15f"
+  dependencies:
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^2.0.1"
+    once "^1.3.0"
+
 glob@^7.0.5, glob@^7.1.0, glob@^7.1.1, glob@~7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.1.tgz#805211df04faaf1c63a3600306cdf5ade50b2ec8"
@@ -2304,6 +2290,15 @@ ieee754@^1.1.4:
 ignore-by-default@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ignore-by-default/-/ignore-by-default-1.0.1.tgz#48ca6d72f6c6a3af00a9ad4ae6876be3889e2b09"
+
+imgur@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/imgur/-/imgur-0.2.0.tgz#a7f0f1fac2c88ab128ec161aaa5e05bdb1c5fb57"
+  dependencies:
+    commander "^2.3.0"
+    glob "^4.0.5"
+    q "^1.0.1"
+    request "^2.40.0"
 
 imurmurhash@^0.1.4:
   version "0.1.4"
@@ -2877,6 +2872,12 @@ minimalistic-assert@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.0.tgz#702be2dda6b37f4836bcb3f5db56641b64a1d3d3"
 
+minimatch@^2.0.1:
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-2.0.10.tgz#8d087c39c6b38c001b97fca7ce6d0e1e80afbac7"
+  dependencies:
+    brace-expansion "^1.0.0"
+
 minimatch@^3.0.0, minimatch@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.3.tgz#2a4e4090b96b2db06a9d7df01055a62a77c9b774"
@@ -3339,6 +3340,10 @@ punycode@^1.3.2, punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
+q@^1.0.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/q/-/q-1.4.1.tgz#55705bcd93c5f3673530c2c2cbc0c2b3addc286e"
+
 qs@6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.2.0.tgz#3b7848c03c2dece69a9522b0fae8c4126d745f3b"
@@ -3624,7 +3629,7 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-request@^2.79.0:
+request@^2.40.0, request@^2.79.0:
   version "2.79.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.79.0.tgz#4dfe5bf6be8b8cdc37fcf93e04b65577722710de"
   dependencies:
