@@ -9,7 +9,7 @@ import { getCurrentGame, getCurrentPlayerFromCurrentGame } from '../selectors/ga
     game: getCurrentGame(state, props),
     me: getCurrentPlayerFromCurrentGame(state, props),
 }))
-@renderAfterModuleLoaded(({ game }) => game ? [`/assets/scripts/games/${game.game}/client.js`] : [])
+@renderAfterModuleLoaded(({ game }) => game ? [`/assets/games/${game.game}/client.js`] : [])
 @autobind
 export default class PlayArea extends PureComponent {
     render() {
@@ -26,6 +26,7 @@ export default class PlayArea extends PureComponent {
             game={game}
             me={me}
             onSendAction={this.onSendAction}
+            publicBaseURL={`/assets/games/${game.game}`}
         />;
     }
 

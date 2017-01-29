@@ -19,29 +19,42 @@ const glob = require('glob');
 const jsonfile = require('jsonfile');
 
 const gameModulePrefix = 'cardboardez-game-';
-const destDir = path.join(__dirname, 'public', 'assets', 'scripts', 'games');
+const destDir = path.join(__dirname, 'public', 'assets', 'games');
 const bundler = browserify();
 const gamelist = [];
 
-glob(path.join(__dirname, 'node_modules', gameModulePrefix + '*'), function (err, files) {
-    if (err || !files || !files.forEach) {
+glob(path.join(__dirname, 'node_modules', gameModulePrefix + '*'), function (err, gameModules) {
+    if (err || !gameModules || !gameModules.forEach) {
         throw new Error(`Couldn't access files: ${err}`);
     }
 
-    files.forEach(filename => {
-        const gameName = filename.match(gameModulePrefix + '([a-zA-Z.-]+)')[1];
+    gameModules.forEach(gameModule => {
+        const gameName = gameModule.match(gameModulePrefix + '([a-zA-Z.-]+)')[1];
         gamelist.push(gameName);
 
         bundler.require(
-            path.join(filename, 'configuration.js'),
+            path.join(gameModule, 'configuration.js'),
             { expose: `${gameModulePrefix}${gameName}-configuration` }
         );
 
         mkdirp(path.join(destDir, gameName), () => {
-            const sourcePath = path.join(filename, 'dist', 'client.js');
-            const destPath = path.join(destDir, gameName, 'client.js');
-            fs.createReadStream(sourcePath)
-                .pipe(fs.createWriteStream(destPath));
+            const distDir = path.join(gameModule, 'dist');
+            fs.readdir(distDir,
+                (err, files) => {
+                    if (err) {
+                        throw new Error(`Can't read dist dir of module ${gameModule}`);
+                    }
+                    if (!files.includes('client.js')) {
+                        throw new Error(`Can't find client.js file in dist dir of module ${gameModule}`);
+                    }
+                    files.forEach(file => {
+                        const sourcePath = path.join(distDir, file);
+                        const destPath = path.join(destDir, gameName, file);
+                        fs.createReadStream(sourcePath)
+                            .pipe(fs.createWriteStream(destPath));
+                    });
+                }
+            );
         });
     });
 

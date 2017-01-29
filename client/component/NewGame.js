@@ -25,7 +25,7 @@ const styles = {
     user: state.user,
     users: state.users,
 }))
-@renderAfterModuleLoaded(() => ['/assets/scripts/games/configurations.js'])
+@renderAfterModuleLoaded(() => ['/assets/games/configurations.js'])
 @autobind
 export default class NewGame extends PureComponent {
     state = {
@@ -33,16 +33,19 @@ export default class NewGame extends PureComponent {
         title: this.props.user.name + '\'s Game',
         players: [this.props.user.id],
         dirtyTitle: false,
-        options: {}
+        options: {},
+        optionsErrors: {},
+        error: null,
     };
 
     render() {
-        const { gameName, title, players, dirtyTitle, options } = this.state;
+        const { gameName, title, players, dirtyTitle, options, error } = this.state;
 
         const config = gameName && getConfiguration(gameName, options, players.length);
 
         return (
             <Paper style={styles.container}>
+                {error && <div>Error: {error}</div>}
                 <SelectField
                     value={gameName}
                     floatingLabelText="Select Game"
@@ -67,13 +70,13 @@ export default class NewGame extends PureComponent {
                 {gameName && this.renderPlayers(config)}
                 {gameName && this.renderOptions(gameName)}
                 {gameName && title && players.length >= config.minPlayers &&
-                    <div style={styles.newGameButtonContainer}>
-                        <RaisedButton
-                            label="Create Game"
-                            onTouchTap={this.onClickCreateGame.bind(this, config)}
-                            primary={true}
-                        />
-                    </div>
+                <div style={styles.newGameButtonContainer}>
+                    <RaisedButton
+                        label="Create Game"
+                        onTouchTap={this.onClickCreateGame.bind(this, config)}
+                        primary={true}
+                    />
+                </div>
                 }
             </Paper>
         );
@@ -109,6 +112,7 @@ export default class NewGame extends PureComponent {
 
     renderOptions(gameName) {
         const stateOptions = this.state.options;
+        const stateErrors = this.state.optionsErrors;
         const { options } = getConfiguration(gameName, stateOptions, this.state.players.filter(p => p).length);
 
         if (!options) {
@@ -116,13 +120,13 @@ export default class NewGame extends PureComponent {
         }
 
         return options.map(option => {
-            const { type, name, label, disabled, items } = option;
+            const { type, name, label, disabled, items, validate } = option;
             const value = stateOptions[name];
             if (type === 'boolean') {
                 return <Toggle
                     key={name}
                     toggled={value}
-                    onToggle={(e, checked) => this.onChangeOption(name, checked)}
+                    onToggle={(e, checked) => this.onChangeOption(name, checked, validate)}
                     disabled={disabled}
                     label={label}
                 />;
@@ -131,7 +135,8 @@ export default class NewGame extends PureComponent {
                     key={name}
                     value={value}
                     floatingLabelText={label}
-                    onChange={(e, k, v) => this.onChangeOption(name, v)}
+                    onChange={(e, k, v) => this.onChangeOption(name, v, validate)}
+                    errorText={stateErrors[name]}
                 >
                     {items.map(({ value, label }) => <MenuItem key={value} value={value} primaryText={label}/>)}
                 </SelectField>
@@ -139,9 +144,10 @@ export default class NewGame extends PureComponent {
                 return <TextField
                     key={name}
                     value={value}
-                    onChange={e => this.onChangeOption(name, e.target.value)}
+                    onChange={e => this.onChangeOption(name, e.target.value, validate)}
                     disabled={disabled}
                     floatingLabelText={label}
+                    errorText={stateErrors[name]}
                 />;
             }
         });
@@ -164,20 +170,36 @@ export default class NewGame extends PureComponent {
         this.setState({ players: newPlayers.filter(player => player) });
     }
 
-    onChangeOption(option, value) {
+    onChangeOption(option, value, validate) {
         this.setState({
             options: {
                 ...this.state.options,
-                [option]: value
-            }
+                [option]: value,
+            },
         });
+
+        if (validate) {
+            validate({ value })
+                .then(valid => this.setState({
+                    optionsErrors: {
+                        ...this.state.optionsErrors,
+                        [option]: valid === true ? false : valid,
+                    },
+                }))
+                .catch(err => this.setState({
+                    optionsErrors: {
+                        ...this.state.optionsErrors,
+                        [option]: err,
+                    },
+                }));
+        }
     }
 
     onClickCreateGame(config) {
         const { gameName: game, title, options } = this.state;
         const players = this.state.players.filter(player => player);
 
-        this.setState({ dirtyTitle: true });
+        this.setState({ dirtyTitle: true, error: null });
 
         if (!title) {
             return;
@@ -185,14 +207,22 @@ export default class NewGame extends PureComponent {
             return;
         }
 
-        this.props.dispatch({
-            type: 'CREATE_GAME',
-            data: {
-                game,
-                title,
-                players,
-                options,
-            }
-        });
+        const gameData = {
+            game,
+            title,
+            players,
+            options,
+        };
+
+        const { hooks = {} } = getConfiguration(game, options, players);
+        const presubmit = hooks.presubmit || Promise.resolve(gameData);
+
+        presubmit(gameData).then(
+            gameData => this.props.dispatch({
+                type: 'CREATE_GAME',
+                data: gameData
+            }),
+            error => this.setState({ error })
+        );
     }
 }

@@ -45,7 +45,7 @@ function getTimeGameUpdatedAsNumber(game) {
     games: state.games,
     users: state.users,
 }))
-@renderAfterModuleLoaded(() => ['/assets/scripts/games/configurations.js'])
+@renderAfterModuleLoaded(() => ['/assets/games/configurations.js'])
 @autobind
 export default class GamesList extends PureComponent {
     state = {
