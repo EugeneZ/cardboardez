@@ -13,7 +13,6 @@
  */
 const fs = require('fs');
 const path = require('path');
-const mkdirp = require('mkdirp');
 const browserify = require('browserify');
 const glob = require('glob');
 const jsonfile = require('jsonfile');
@@ -23,12 +22,15 @@ const destDir = path.join(__dirname, 'public', 'assets', 'games');
 const bundler = browserify();
 const gamelist = [];
 
+const useSymlinks = process.argv.includes('--useSymlinks');
+
 glob(path.join(__dirname, 'node_modules', gameModulePrefix + '*'), function (err, gameModules) {
     if (err || !gameModules || !gameModules.forEach) {
         throw new Error(`Couldn't access files: ${err}`);
     }
 
     gameModules.forEach(gameModule => {
+        const distDir = path.join(gameModule, 'dist');
         const gameName = gameModule.match(gameModulePrefix + '([a-zA-Z.-]+)')[1];
         gamelist.push(gameName);
 
@@ -37,28 +39,40 @@ glob(path.join(__dirname, 'node_modules', gameModulePrefix + '*'), function (err
             { expose: `${gameModulePrefix}${gameName}-configuration` }
         );
 
-        mkdirp(path.join(destDir, gameName), () => {
-            const distDir = path.join(gameModule, 'dist');
-            fs.readdir(distDir,
-                (err, files) => {
+        fs.mkdir(destDir, () => {
+
+            if (useSymlinks) {
+                fs.symlink(distDir, path.join(destDir, gameName), 'junction', err => {
                     if (err) {
-                        throw new Error(`Can't read dist dir of module ${gameModule}`);
+                        throw new Error('Could not create symlink: ' + err);
                     }
-                    if (!files.includes('client.js')) {
-                        throw new Error(`Can't find client.js file in dist dir of module ${gameModule}`);
+                });
+                return;
+            }
+
+            fs.mkdir(path.join(destDir, gameName), () => {
+
+                fs.readdir(distDir,
+                    (err, files) => {
+                        if (err) {
+                            throw new Error(`Can't read dist dir of module ${gameModule}: ${err}`);
+                        }
+                        if (!files.includes('client.js')) {
+                            throw new Error(`Can't find client.js file in dist dir of module ${gameModule}`);
+                        }
+                        files.forEach(file => {
+                            const sourcePath = path.join(distDir, file);
+                            const destPath = path.join(destDir, gameName, file);
+                            fs.createReadStream(sourcePath)
+                                .pipe(fs.createWriteStream(destPath));
+                        });
                     }
-                    files.forEach(file => {
-                        const sourcePath = path.join(distDir, file);
-                        const destPath = path.join(destDir, gameName, file);
-                        fs.createReadStream(sourcePath)
-                            .pipe(fs.createWriteStream(destPath));
-                    });
-                }
-            );
+                );
+            });
         });
     });
 
-    mkdirp(path.join(destDir), () => {
+    fs.mkdir(destDir, () => {
         const configPath = path.join(destDir, 'configurations.js');
         bundler.bundle().pipe(fs.createWriteStream(configPath));
     });

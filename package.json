@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npm run build && node server.js",
     "build:games": "node gameModuleBuilder.js",
+    "build:games:symlinks": "node gameModuleBuilder.js --useSymlinks",
     "build:client": "browserify -r react -r react-dom -r material-ui -t babelify -t browserify-data client/main.js | uglifyjs - -c -m -o public/assets/scripts/client.js",
     "build": "npm run build:games && npm run build:client",
     "watchify": "watchify --debug -r react -r react-dom -r material-ui -t babelify -t browserify-data client/main.js -o public/assets/scripts/client.js",
@@ -43,7 +44,6 @@
     "jsonfile": "^2.4.0",
     "lodash": "^4.16.2",
     "material-ui": "^0.16.7",
-    "mkdirp": "^0.5.1",
     "passport-facebook": "^1.0.3",
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^1.0.0",
