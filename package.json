@@ -28,7 +28,7 @@
     "browserify-data": "^0.2.0",
     "cardboardez-game-nicknames": "^0.0.3",
     "cardboardez-game-summit": "^0.0.5",
-    "cardboardez-game-trixit": "^0.0.3",
+    "cardboardez-game-trixit": "^0.0.5",
     "compression": "^1.6.2",
     "config": "^1.10.0",
     "feathers": "^2.0.2",
