@@ -215,7 +215,7 @@ export default class NewGame extends PureComponent {
         };
 
         const { hooks = {} } = getConfiguration(game, options, players);
-        const presubmit = hooks.presubmit || Promise.resolve(gameData);
+        const presubmit = hooks.presubmit || new Promise(resolve => resolve(gameData));
 
         presubmit(gameData).then(
             gameData => this.props.dispatch({
