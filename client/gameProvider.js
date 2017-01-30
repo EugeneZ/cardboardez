@@ -16,5 +16,11 @@ export function getLibrary() {
  * @returns {*}
  */
 export function getConfiguration(gameName, currentOptions, currentPlayerCount) {
-    return require(`cardboardez-game-${gameName}-configuration`).getConfiguration(currentOptions, currentPlayerCount);
+    try {
+        return require(`cardboardez-game-${gameName}-configuration`).getConfiguration(currentOptions, currentPlayerCount);
+    } catch (ex) {
+        return {
+            name: 'Unknown Game'
+        }
+    }
 }
