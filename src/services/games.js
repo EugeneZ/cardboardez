@@ -2,7 +2,7 @@ const config = require('config');
 const dbService = require('feathers-rethinkdb');
 const hooks = require('feathers-hooks-common');
 const gameProvider = require('../gameProvider');
-const authHooks = require('feathers-authentication').hooks;
+const { authenticate } = require('./authentication');
 const _ = require('lodash');
 
 const ENDPOINT = `/${config.api}/games`;
@@ -74,7 +74,7 @@ module.exports = function(app, dbPromise) {
     return dbPromise.then(r => {
         app.use(ENDPOINT, dbService({Model: r, name: 'games'}));
 
-        app.service(ENDPOINT).before(authHooks.authenticate(['google']));
+        app.service(ENDPOINT).before(authenticate());
 
         app.service(ENDPOINT).before({
 

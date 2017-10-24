@@ -1,19 +1,19 @@
-const config = require('config');
 const dbService = require('feathers-rethinkdb');
 const hooks = require('feathers-hooks-common');
 const authHooks = require('feathers-authentication-hooks');
-const authenticate = require('feathers-authentication');
+const { UserEndpoint } = require('../endpoints')();
+const { authenticate, attachHeaders } = require('./authentication');
 
-const ENDPOINT = `/${config.api}/users`;
+const ENDPOINT = UserEndpoint;
 
 module.exports = function(app, dbPromise) {
     return dbPromise.then(r => {
-        app.use(ENDPOINT, dbService({Model: r, name: 'users'}));
+        app.use(ENDPOINT, attachHeaders, dbService({Model: r, name: 'users'}));
 
         app.service(ENDPOINT).before({
             create: [hooks.disallow('external'), hooks.pluck('id', 'name')],
             update: [hooks.disallow('external'), hooks.pluck('id', 'name')],
-            patch : [hooks.pluck('id', 'name'), authenticate.hooks.authenticate('jwt'), authHooks.restrictToOwner({ idField: 'id', ownerField: 'id'})],
+            patch : [hooks.pluck('id', 'name'), authenticate(), authHooks.restrictToOwner({ idField: 'id', ownerField: 'id'})],
             remove: [hooks.disallow('external'), hooks.pluck('id', 'name')]
         });
 
