@@ -6,10 +6,9 @@ const hooks = require('feathers-hooks');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const errorHandler = require('feathers-errors/handler');
-const path = require('path');
-const authentication = require('./server/services/authentication');
-const services = require('./server/services');
-const db = require('./server/db');
+const authentication = require('./services/authentication');
+const services = require('./services');
+const db = require('./db');
 
 const app = feathers();
 
@@ -25,11 +24,7 @@ app.use(feathers.static('public'));
 app.configure(hooks());
 app.configure(rest());
 app.configure(socketio());
-app.configure(authentication(app));
-
-app.get('/*', (req,res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'))
-});
+app.configure(authentication());
 
 Promise.all([dbPromise, servicesPromise]).then(
     () => app.listen(config.port),

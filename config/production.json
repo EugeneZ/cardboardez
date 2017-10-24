@@ -1,0 +1,5 @@
+{
+  "db": {
+    "hosts": [{ "host": "aws-us-east-1-portal.23.dblayer.com", "port": 16535 }]
+  }
+}

@@ -1,6 +1,6 @@
 const config = require('config');
 const dbService = require('feathers-rethinkdb');
-const hooks = require('feathers-hooks');
+const hooks = require('feathers-hooks-common');
 const gameProvider = require('../gameProvider');
 const authHooks = require('feathers-authentication').hooks;
 const _ = require('lodash');
@@ -74,7 +74,7 @@ module.exports = function(app, dbPromise) {
     return dbPromise.then(r => {
         app.use(ENDPOINT, dbService({Model: r, name: 'games'}));
 
-        app.service(ENDPOINT).before(authHooks.populateUser());
+        app.service(ENDPOINT).before(authHooks.authenticate(['google']));
 
         app.service(ENDPOINT).before({
 
@@ -100,8 +100,8 @@ module.exports = function(app, dbPromise) {
             },
 
             update: updateBasedOnGameAction,
-            patch : hooks.disable('external'),
-            remove: hooks.disable('external')
+            patch : hooks.disallow('external'),
+            remove: hooks.disallow('external')
         });
 
         /**

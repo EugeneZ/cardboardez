@@ -1,14 +1,15 @@
 const config = require('config');
-const fs = require('fs');
-const path = require('path');
+const rethinkdbdash = require('rethinkdbdash');
 
-const r = require('rethinkdbdash')({
+require('ssl-root-cas').inject();
+
+const cert = process.env.db_cert && Buffer.from(process.env.db_cert, 'base64');
+
+const r = rethinkdbdash({
     servers: config.db.hosts,
     db: config.db.name,
-    authKey: config.db.authKey,
-    ssl: config.db.cafile ? {
-        ca: [ fs.readFileSync(path.join(__dirname, '..', 'config', config.db.cafile)) ]
-    } : undefined
+    authKey: process.env.db_password,
+    ssl: cert && { ca: cert }
 });
 
 const INITIAL_TABLES = [

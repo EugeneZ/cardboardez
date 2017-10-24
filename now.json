@@ -1,0 +1,7 @@
+{
+  "env": {
+    "jwt_secret": "@jwt_secret",
+    "db_cert": "@db_cert",
+    "db_password": "@db_password"
+  }
+}
