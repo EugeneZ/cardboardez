@@ -1,9 +1,11 @@
 const config = require('config');
 const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
-const { UserEndpoint } = require('../endpoints')();
 
-const ENDPOINT = `${config.get('api')}/authenticate`;
+const googleConfig = {
+    tokenInfoURL: config.get('authentication.google.tokenInfoURL'),
+    profileURL: config.get('authentication.google.profileURL')
+};
 
 const secret = process.env.jwt_secret;
 
@@ -11,7 +13,7 @@ const validTokens = new Set();
 
 async function validateProviderAndGetOrCreateUser(app, providerToken) {
     const { error, sub, user_id } =
-        await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${providerToken}`)
+        await fetch(`${googleConfig.tokenInfoURL}?access_token=${providerToken}`)
             .then(response => response.json());
 
     if (error || (!user_id && !sub)) {
@@ -20,16 +22,18 @@ async function validateProviderAndGetOrCreateUser(app, providerToken) {
 
     const id = user_id || sub;
 
-    const existingUsers = await app.service(UserEndpoint).find({ query: { googleId: id } });
+    const users = app.service('users');
+
+    const existingUsers = await users.find({ query: { googleId: id } });
     if (existingUsers && existingUsers.length) {
         return existingUsers[0];
     }
 
-    const profile = await fetch('https://www.googleapis.com/plus/v1/people/me', {
+    const profile = await fetch(googleConfig.profileURL, {
         Authorization: `Bearer ${providerToken}`
     }).then(response => response.json());
 
-    return await app.service(UserEndpoint).create({
+    return await users.create({
         googleId: id,
         google: profile,
     });
@@ -46,7 +50,7 @@ async function validateTokenAndGetUser(app, token) {
 
     const { id } = jwt.verify(token, secret);
 
-    const user = await app.service(UserEndpoint).get(id);
+    const user = await app.service('users').get(id);
 
     if (!user) {
         throw new Error('User not found (was the user removed?)');
@@ -74,7 +78,7 @@ function attachHeaders(req, res, next) {
 module.exports = function () {
     return function () {
         const app = this;
-        app.use(ENDPOINT, attachHeaders, {
+        app.use('authenticate', attachHeaders, {
             async get(id, { headers }) {
                 validateHeaders(headers);
 

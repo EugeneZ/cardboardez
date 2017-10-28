@@ -1,11 +1,9 @@
 const config = require('config');
 const rethinkdbdash = require('rethinkdbdash');
 
-require('ssl-root-cas').inject();
-
 const cert = process.env.db_cert && Buffer.from(process.env.db_cert, 'base64');
 
-const r = rethinkdbdash({
+const db = rethinkdbdash({
     servers: config.db.hosts,
     db: config.db.name,
     authKey: process.env.db_password,
@@ -24,23 +22,23 @@ const INITIAL_TABLES = [
  * @type {Promise.<TResult>} Promise that resolves when the connection is ready.
  */
 module.exports = function(){
-    return r.dbList()
+    return db.dbList()
         .contains(config.db.name)
-        .do(dbExists => r.branch(dbExists, {created: 0}, r.dbCreate(config.db.name))).run()
+        .do(dbExists => db.branch(dbExists, {created: 0}, db.dbCreate(config.db.name))).run()
 
         .then(() => {
             const promises = [];
             for(var i in INITIAL_TABLES) {
                 promises.push(
-                    r.db(config.db.name)
+                    db.db(config.db.name)
                         .tableList()
                         .contains(INITIAL_TABLES[i])
-                        .do(tableExists => r.branch( tableExists, {created: 0}, r.tableCreate(INITIAL_TABLES[i])))
+                        .do(tableExists => db.branch( tableExists, {created: 0}, db.tableCreate(INITIAL_TABLES[i])))
                         .run()
                 );
             }
             return Promise.all(promises);
         })
 
-        .then(() => r);
+        .then(() => db);
 };

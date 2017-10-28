@@ -4,5 +4,11 @@
   "db": {
     "name": "cardboardez",
     "hosts": [{ "host": "localhost", "port": 28015 }]
+  },
+  "authentication": {
+    "google": {
+      "tokenInfoURL": "https://www.googleapis.com/oauth2/v3/tokeninfo",
+      "profileURL": "https://www.googleapis.com/plus/v1/people/me"
+    }
   }
 }

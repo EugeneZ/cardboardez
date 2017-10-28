@@ -6,8 +6,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "nodemon": "nodemon --harmony-async-await --debug --ignore client/ --ignore public/ --ignore game/*/component/* src/server.js",
-    "test": "tape -r babel-register \"test/unit/**/*.js\""
+    "test": "tape \"test/e2e/**/*.js\""
   },
   "dependencies": {
     "body-parser": "^1.10.2",
@@ -29,15 +28,9 @@
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.16.2",
     "node-fetch": "^1.7.3",
-    "passport-facebook": "^1.0.3",
-    "passport-github": "^1.1.0",
-    "passport-google-oauth20": "^1.0.0",
-    "passport-vimeo-oauth2": "0.0.3",
-    "rethinkdbdash": "^2.3.31",
-    "ssl-root-cas": "^1.2.4"
+    "rethinkdbdash": "^2.3.31"
   },
   "devDependencies": {
-    "nodemon": "^1.10.2",
     "tape": "^4.6.0"
   }
 }
