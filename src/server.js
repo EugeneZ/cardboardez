@@ -26,7 +26,12 @@ app.configure(rest());
 app.configure(socketio());
 app.configure(authentication());
 
-Promise.all([dbPromise, servicesPromise]).then(
+const serverPromise = Promise.all([dbPromise, servicesPromise]).then(
     () => app.listen(config.port),
     err => console.log('Failed to start: ', err)
 );
+
+module.exports = {
+    app,
+    serverPromise
+};

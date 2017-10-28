@@ -1,0 +1,35 @@
+{
+  "tokeninfo": [
+    {
+      "token": "validtoken",
+      "sub": "validjwt"
+    },
+    {
+      "token": "errortoken",
+      "error": "Invalid token"
+    }
+  ],
+  "profileGoogle": {
+    "token": "validjwt",
+    "accessToken": "123",
+    "displayName": "Test User",
+    "emails": [
+      {
+        "type": "account",
+        "value": "eugenezar@gmail.com"
+      }
+    ],
+    "id": "1",
+    "image": {
+      "isDefault": false,
+      "url": "https://lh6.googleusercontent.com/-uVqdSP_RK7U/AAAAAAAAAAI/AAAAAAAAAng/zEFsrxVCrW4/photo.jpg?sz=50"
+    },
+    "language": "en",
+    "name": {
+      "familyName": "User",
+      "givenName": "Test"
+    },
+    "url": "https://plus.google.com/102218594542013439067",
+    "verified": false
+  }
+}

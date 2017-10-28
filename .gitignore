@@ -11,3 +11,5 @@
 /public/assets/*
 gamelist.json
 npm-debug.*
+
+db\.json

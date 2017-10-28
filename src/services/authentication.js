@@ -79,7 +79,7 @@ module.exports = function () {
     return function () {
         const app = this;
         app.use('authenticate', attachHeaders, {
-            async get(id, { headers }) {
+            async find({ headers }) {
                 validateHeaders(headers);
 
                 const token = getAccessToken(headers.authorization);
