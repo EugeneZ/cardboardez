@@ -17,7 +17,7 @@ async function validateProviderAndGetOrCreateUser(app, providerToken) {
             .then(response => response.json());
 
     if (error || (!user_id && !sub)) {
-        return new Error(`Can't validate token`, error);
+        throw new Error(`Can't validate token`, error);
     }
 
     const id = user_id || sub;

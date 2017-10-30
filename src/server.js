@@ -18,7 +18,6 @@ const servicesPromise = services(app, dbPromise);
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(errorHandler());
 app.use(feathers.static('public'));
 
 app.configure(hooks());
@@ -26,8 +25,16 @@ app.configure(rest());
 app.configure(socketio());
 app.configure(authentication());
 
+app.use(errorHandler());
+
 const serverPromise = Promise.all([dbPromise, servicesPromise]).then(
-    () => app.listen(config.port),
+    () => new Promise((resolve, reject)=> {
+        try {
+            const server = app.listen(config.port, () => resolve(server));
+        } catch (err) {
+            reject(err);
+        }
+    }),
     err => console.log('Failed to start: ', err)
 );
 
