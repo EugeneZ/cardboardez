@@ -1,6 +1,7 @@
 const config = require('config');
 const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
+const { NotFound, BadRequest, GeneralError } = require('feathers-errors');
 
 const googleConfig = {
     tokenInfoURL: config.get('authentication.google.tokenInfoURL'),
@@ -17,7 +18,7 @@ async function validateProviderAndGetOrCreateUser(app, providerToken) {
             .then(response => response.json());
 
     if (error || (!user_id && !sub)) {
-        throw new Error(`Can't validate token`, error);
+        throw new NotFound(`Can't validate token`, error);
     }
 
     const id = user_id || sub;
@@ -41,11 +42,11 @@ async function validateProviderAndGetOrCreateUser(app, providerToken) {
 
 async function validateTokenAndGetUser(app, token) {
     if (!token) {
-        throw new Error('No token found');
+        throw new BadRequest('No token found');
     }
 
     if (!validTokens.has(token)) {
-        throw new Error('Invalid token: No longer have it (was it removed?)');
+        throw new NotFound('Invalid token: No longer have it (was it removed?)');
     }
 
     const { id } = jwt.verify(token, secret);
@@ -53,7 +54,7 @@ async function validateTokenAndGetUser(app, token) {
     const user = await app.service('users').get(id);
 
     if (!user) {
-        throw new Error('User not found (was the user removed?)');
+        throw new GeneralError('User not found (was the user removed?)');
     }
 
     return user;
@@ -61,7 +62,7 @@ async function validateTokenAndGetUser(app, token) {
 
 function validateHeaders(headers) {
     if (!headers || !headers.authorization) {
-        throw new Error('No access token found');
+        throw new BadRequest('No access token found');
     }
 }
 
@@ -110,6 +111,8 @@ module.exports = function () {
                 validateHeaders(headers);
 
                 const access_token = getAccessToken(headers.authorization);
+
+                await validateTokenAndGetUser(app, access_token);
 
                 validTokens.delete(access_token);
 
