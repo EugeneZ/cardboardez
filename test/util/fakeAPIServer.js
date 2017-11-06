@@ -1,5 +1,7 @@
 const feathers = require('feathers');
 
+const googleId = 'testgoogleid' + Math.random().toString();
+
 function authorizationMiddleware(req, res, next) {
     const authorizationHeader = req.get('Authorization');
 
@@ -11,7 +13,7 @@ function authorizationMiddleware(req, res, next) {
 
 function tokeninfo(req, res, next) {
     if (req.query.access_token === 'googletoken') {
-        res.json({ sub: 'testgoogleid' });
+        res.json({ sub: googleId });
     } else {
         res.json({ error_description: 'Invalid Value' });
     }
@@ -29,7 +31,7 @@ function googleProfile(req, res, next) {
                     "value": "eugenezar@gmail.com"
                 }
             ],
-            "id": "testgoogleid",
+            "id": googleId,
             "image": {
                 "isDefault": false,
                 "url": "https://lh6.googleusercontent.com/-uVqdSP_RK7U/AAAAAAAAAAI/AAAAAAAAAng/zEFsrxVCrW4/photo.jpg?sz=50"

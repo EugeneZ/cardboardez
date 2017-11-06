@@ -4,5 +4,8 @@
       "tokenInfoURL": "http://localhost:3001/tokeninfo",
       "profileURL": "http://localhost:3001/profile/google"
     }
+  },
+  "db": {
+    "name": "cardboardez_test"
   }
 }
