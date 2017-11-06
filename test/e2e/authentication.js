@@ -1,35 +1,5 @@
 const tape = require('tape');
-const fetch = require('node-fetch');
-const { inspect } = require('util');
-
-const baseURL = 'http://localhost:3000';
-
-function authenticateRequest({ authorization, method, debug }) {
-    const headers = {
-        Accept: 'application/json',
-        Authorization: `Bearer ${authorization}`,
-    };
-
-    const raw = fetch(baseURL + '/authenticate', {
-        method,
-        headers,
-    });
-
-    const json = raw.then(response => {
-        debug && console.log(`${method} ${response.url} is ok? ${response.ok}`);
-        return response.json();
-    }).then(json => {
-        debug && console.log(`Headers: ${inspect(headers)}`);
-        debug && console.log(`Response: ${inspect(json)}`);
-        return json;
-    });
-
-    return Promise.all([raw, json]);
-}
-
-async function getUsers() {
-    return fetch(baseURL + '/users').then(response => response.json());
-}
+const { authenticateRequest, getUsers } = require('../util/testHelpers');
 
 tape('POST /authenticate, GET /authenticate, DELETE /authenticate: generates a jwt when given a valid google token', async test => {
     test.plan(12);
