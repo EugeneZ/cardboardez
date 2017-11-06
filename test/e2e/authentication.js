@@ -2,45 +2,81 @@ const tape = require('tape');
 const fetch = require('node-fetch');
 const { inspect } = require('util');
 
-function authenticateRequest({ authorization, method }) {
+const baseURL = 'http://localhost:3000';
+
+function authenticateRequest({ authorization, method, debug }) {
     const headers = {
         Accept: 'application/json',
         Authorization: `Bearer ${authorization}`,
     };
 
-    const raw = fetch('http://localhost:3000/authenticate', {
+    const raw = fetch(baseURL + '/authenticate', {
         method,
         headers,
     });
 
     const json = raw.then(response => {
-        console.log(`${method} ${response.url} is ok? ${response.ok}`);
+        debug && console.log(`${method} ${response.url} is ok? ${response.ok}`);
         return response.json();
     }).then(json => {
-        console.log(`Response: ${inspect(json)}`);
-        console.log(`Headers: ${inspect(headers)}`);
+        debug && console.log(`Headers: ${inspect(headers)}`);
+        debug && console.log(`Response: ${inspect(json)}`);
         return json;
     });
 
-    return Promise.all([ raw, json ]);
+    return Promise.all([raw, json]);
 }
 
-tape('POST /authenticate: generates a jwt when given a valid google token', test => {
-    test.plan(2);
+async function getUsers() {
+    return fetch(baseURL + '/users').then(response => response.json());
+}
 
-    authenticateRequest({ authorization: 'googletoken', method: 'POST' })
-        .then(([raw, json])=>{
-            test.ok(raw.ok, 'sends ok status code');
-            test.ok(json.token, 'sends a jwt');
-            test.end();
-        });
+tape('POST /authenticate, GET /authenticate, DELETE /authenticate: generates a jwt when given a valid google token', async test => {
+    test.plan(12);
+
+    const initialUsers = await getUsers();
+
+    const [rawPOST, jsonPOST] = await authenticateRequest({ authorization: 'googletoken', method: 'POST' });
+
+    const usersAfterFirstPOST = await getUsers();
+
+    await authenticateRequest({ authorization: 'googletoken', method: 'POST' });
+
+    const usersAfterSecondPOST = await getUsers();
+
+    test.strictEquals(usersAfterFirstPOST.length, initialUsers.length + 1, 'POST creates a new user the first time');
+    test.strictEquals(usersAfterSecondPOST.length, usersAfterFirstPOST.length, 'POST does not create a user the second time');
+    test.ok(rawPOST.ok, 'POST sends ok status code');
+    test.ok(jsonPOST.token, 'POST sends a jwt');
+    test.ok(jsonPOST.user, 'POST sends a user');
+    test.strictEquals(jsonPOST.user.name, 'Test User', 'POST sends correct user');
+
+    const [rawGET, jsonGET] = await authenticateRequest({ authorization: jsonPOST.token });
+
+    test.ok(rawGET.ok, 'GET sends ok status code');
+    test.ok(jsonGET.user, 'GET sends a user');
+    test.strictEquals(jsonGET.user.name, 'Test User', 'GET sends correct user');
+
+    const [rawDELETE] = await authenticateRequest({ authorization: jsonPOST.token, method: 'DELETE' });
+
+    test.ok(rawDELETE.ok, 'DELETE sends ok status code');
+
+    const [rawInvalidGET, jsonInvalidGET] = await authenticateRequest({
+        authorization: jsonPOST.token,
+        method: 'DELETE'
+    });
+
+    test.notOk(rawInvalidGET.ok, 'GET after DELETE does not send ok status code');
+    test.notOk(jsonInvalidGET.user, 'GET after DELETE does not send a user');
+
+    test.end();
 });
 
 tape('POST /authenticate: does not generate a valid jwt if given an invalid google token', test => {
     test.plan(3);
 
     authenticateRequest({ authorization: ':(', method: 'POST' })
-        .then(([raw, json])=>{
+        .then(([raw, json]) => {
             test.notOk(raw.ok, 'does not send ok status code');
             test.strictEquals(raw.status, 404, 'sends 404 code');
             test.notOk(json.token, 'does not generate a jwt');
@@ -50,8 +86,8 @@ tape('POST /authenticate: does not generate a valid jwt if given an invalid goog
 
 tape('DELETE /authenticate: cannot delete invalid token', test => {
     test.plan(2);
-    authenticateRequest({ authorization: 'fail', method: 'DELETE'})
-        .then(([raw, json])=>{
+    authenticateRequest({ authorization: 'fail', method: 'DELETE' })
+        .then(([raw, json]) => {
             test.notOk(raw.ok, 'Sends unsuccessful status code');
             test.strictEquals(raw.status, 404, 'sends 404 code');
             test.end();

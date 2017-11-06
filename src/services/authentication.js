@@ -31,8 +31,12 @@ async function validateProviderAndGetOrCreateUser(app, providerToken) {
     }
 
     const profile = await fetch(googleConfig.profileURL, {
-        Authorization: `Bearer ${providerToken}`
+        headers: { Authorization: `Bearer ${providerToken}` }
     }).then(response => response.json());
+
+    if (!profile || !profile.id) {
+        throw new Error(`Invalid google profile response`, profile.error);
+    }
 
     return await users.create({
         googleId: id,
