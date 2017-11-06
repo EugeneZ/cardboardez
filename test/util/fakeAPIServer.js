@@ -11,8 +11,8 @@ function authorizationMiddleware(req, res, next) {
     next();
 }
 
-function tokeninfo(req, res, next) {
-    if (req.query.access_token === 'googletoken') {
+function tokeninfo({ query: { access_token } }, res, next) {
+    if (access_token && access_token.indexOf('googletoken') === 0) {
         res.json({ sub: googleId });
     } else {
         res.json({ error_description: 'Invalid Value' });
@@ -20,9 +20,11 @@ function tokeninfo(req, res, next) {
     next();
 }
 
-function googleProfile(req, res, next) {
-    if (req.query.token === 'googletoken') {
-        res.json({
+function googleProfile({ query: { token }}, res, next) {
+    if (token && token.indexOf('googletoken') === 0) {
+        const injectedData = token.replace('googletoken', '').trim();
+        const override = injectedData ? JSON.parse(injectedData) : {};
+        res.json(Object.assign({
             "accessToken": "123",
             "displayName": "Test User",
             "emails": [
@@ -43,7 +45,7 @@ function googleProfile(req, res, next) {
             },
             "url": "https://plus.google.com/102218594542013439067",
             "verified": false
-        })
+        }, override));
     } else {
         res.json({
             "error": {
