@@ -4,13 +4,15 @@ const { authenticateRequest, getUsers } = require('../util/testHelpers');
 tape('POST /authenticate, GET /authenticate, DELETE /authenticate: generates a jwt when given a valid google token', async test => {
     test.plan(12);
 
+    const random = Math.random();
+
     const initialUsers = await getUsers();
 
-    const [rawPOST, jsonPOST] = await authenticateRequest({ authorization: 'googletoken', method: 'POST' });
+    const [rawPOST, jsonPOST] = await authenticateRequest({ authorization: 'googletoken' + random, method: 'POST' });
 
     const usersAfterFirstPOST = await getUsers();
 
-    await authenticateRequest({ authorization: 'googletoken', method: 'POST' });
+    await authenticateRequest({ authorization: 'googletoken' + random, method: 'POST' });
 
     const usersAfterSecondPOST = await getUsers();
 

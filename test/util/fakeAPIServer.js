@@ -1,6 +1,6 @@
 const feathers = require('feathers');
 
-const googleId = 'testgoogleid' + Math.random().toString();
+const googleId = (id)=>'testgoogleid' + id;
 
 function authorizationMiddleware(req, res, next) {
     const authorizationHeader = req.get('Authorization');
@@ -13,7 +13,8 @@ function authorizationMiddleware(req, res, next) {
 
 function tokeninfo({ query: { access_token } }, res, next) {
     if (access_token && access_token.indexOf('googletoken') === 0) {
-        res.json({ sub: googleId });
+        const injectedData = access_token.replace('googletoken', '').trim();
+        res.json({ sub: googleId(injectedData) });
     } else {
         res.json({ error_description: 'Invalid Value' });
     }
@@ -33,7 +34,7 @@ function googleProfile({ query: { token }}, res, next) {
                     "value": "eugenezar@gmail.com"
                 }
             ],
-            "id": googleId,
+            "id": googleId(injectedData),
             "image": {
                 "isDefault": false,
                 "url": "https://lh6.googleusercontent.com/-uVqdSP_RK7U/AAAAAAAAAAI/AAAAAAAAAng/zEFsrxVCrW4/photo.jpg?sz=50"
