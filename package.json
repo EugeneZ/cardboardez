@@ -15,6 +15,7 @@
     "cardboardez-game-trixit": "^0.0.5",
     "compression": "^1.7.1",
     "config": "^1.27.0",
+    "cors": "^2.8.4",
     "feathers": "^2.0.2",
     "feathers-authentication-hooks": "^0.1.5",
     "feathers-errors": "^2.9.2",
