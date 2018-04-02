@@ -13,3 +13,4 @@ gamelist.json
 npm-debug.*
 
 db\.json
+launch.json
