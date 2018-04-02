@@ -83,6 +83,26 @@ function attachHeaders(req, res, next) {
 module.exports = function () {
     return function () {
         const app = this;
+
+        // Checks for authentication token and decorates the application if the user is authenticated
+        app.use(attachHeaders, async function(req, res, next){
+            try {
+                validateHeaders(req.headers);
+
+                const token = getAccessToken(req.headers.authorization);
+
+                const user = await validateTokenAndGetUser(app, token);
+
+                req.feathers.authenticated = true;
+                req.feathers.user = user;
+
+                next();
+            } catch (err) {
+                next();
+            }
+        });
+
+        // Actual authentication services
         app.use('authenticate', attachHeaders, {
             async find({ headers }) {
                 validateHeaders(headers);
@@ -138,16 +158,6 @@ module.exports.authenticate = function() {
         if (hook.type !== 'before') {
             throw new Error(`The 'authenticate' hook should only be used as a 'before' hook.`);
         }
-
-        validateHeaders(hook.params.headers);
-        const token = getAccessToken(hook.params.headers.authorization);
-        const user = await validateTokenAndGetUser(app, token);
-
-        hook.params = {
-            authenticated: true,
-            user,
-            ...hook.params
-        };
 
         return hook;
     }
