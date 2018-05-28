@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "main": "src/server.js",
   "scripts": {
+    "precommit": "lint-staged",
     "start": "node src/server.js",
     "test": "cross-env NODE_ENV=test jwt_secret=test node test/e2e.js"
   },
@@ -33,6 +34,15 @@
   },
   "devDependencies": {
     "cross-env": "^5.1.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.1.2",
+    "prettier": "1.13.0",
     "tape": "^4.6.0"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }

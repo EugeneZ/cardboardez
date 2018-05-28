@@ -31,17 +31,18 @@ const servicesPromise = services(app, dbPromise);
 app.use(errorHandler());
 
 const serverPromise = Promise.all([dbPromise, servicesPromise]).then(
-    () => new Promise((resolve, reject)=> {
-        try {
-            const server = app.listen(config.port, () => resolve(server));
-        } catch (err) {
-            reject(err);
-        }
+  () =>
+    new Promise((resolve, reject) => {
+      try {
+        const server = app.listen(config.port, () => resolve(server));
+      } catch (err) {
+        reject(err);
+      }
     }),
-    err => console.log('Failed to start: ', err)
+  err => console.log('Failed to start: ', err)
 );
 
 module.exports = {
-    app,
-    serverPromise
+  app,
+  serverPromise
 };

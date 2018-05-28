@@ -5,9 +5,9 @@
  * @param dbPromise - a Promise that resolves after the database connection is complete for services that depend on db
  */
 module.exports = function(app, dbPromise) {
-    return Promise.all([
-        (require('./services/games'))(app, dbPromise),
-        (require('./services/token'))(app, dbPromise),
-        (require('./services/users'))(app, dbPromise)
-    ]);
+  return Promise.all([
+    require('./services/games')(app, dbPromise),
+    require('./services/token')(app, dbPromise),
+    require('./services/users')(app, dbPromise)
+  ]);
 };

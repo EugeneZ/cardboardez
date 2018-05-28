@@ -24,58 +24,61 @@ const gamelist = [];
 
 const useSymlinks = process.argv.includes('--useSymlinks');
 
-glob(path.join(__dirname, 'node_modules', gameModulePrefix + '*'), function (err, gameModules) {
-    if (err || !gameModules || !gameModules.forEach) {
-        throw new Error(`Couldn't access files: ${err}`);
-    }
+glob(path.join(__dirname, 'node_modules', gameModulePrefix + '*'), function(
+  err,
+  gameModules
+) {
+  if (err || !gameModules || !gameModules.forEach) {
+    throw new Error(`Couldn't access files: ${err}`);
+  }
 
-    gameModules.forEach(gameModule => {
-        const distDir = path.join(gameModule, 'dist');
-        const gameName = gameModule.match(gameModulePrefix + '([a-zA-Z.-]+)')[1];
-        gamelist.push(gameName);
+  gameModules.forEach(gameModule => {
+    const distDir = path.join(gameModule, 'dist');
+    const gameName = gameModule.match(gameModulePrefix + '([a-zA-Z.-]+)')[1];
+    gamelist.push(gameName);
 
-        bundler.require(
-            path.join(gameModule, 'configuration.js'),
-            { expose: `${gameModulePrefix}${gameName}-configuration` }
-        );
-
-        fs.mkdir(destDir, () => {
-
-            if (useSymlinks) {
-                fs.symlink(distDir, path.join(destDir, gameName), 'junction', err => {
-                    if (err) {
-                        throw new Error('Could not create symlink: ' + err);
-                    }
-                });
-                return;
-            }
-
-            fs.mkdir(path.join(destDir, gameName), () => {
-
-                fs.readdir(distDir,
-                    (err, files) => {
-                        if (err) {
-                            throw new Error(`Can't read dist dir of module ${gameModule}: ${err}`);
-                        }
-                        if (!files.includes('client.js')) {
-                            throw new Error(`Can't find client.js file in dist dir of module ${gameModule}`);
-                        }
-                        files.forEach(file => {
-                            const sourcePath = path.join(distDir, file);
-                            const destPath = path.join(destDir, gameName, file);
-                            fs.createReadStream(sourcePath)
-                                .pipe(fs.createWriteStream(destPath));
-                        });
-                    }
-                );
-            });
-        });
+    bundler.require(path.join(gameModule, 'configuration.js'), {
+      expose: `${gameModulePrefix}${gameName}-configuration`
     });
 
     fs.mkdir(destDir, () => {
-        const configPath = path.join(destDir, 'configurations.js');
-        bundler.bundle().pipe(fs.createWriteStream(configPath));
-    });
+      if (useSymlinks) {
+        fs.symlink(distDir, path.join(destDir, gameName), 'junction', err => {
+          if (err) {
+            throw new Error('Could not create symlink: ' + err);
+          }
+        });
+        return;
+      }
 
-    jsonfile.writeFileSync(path.join(__dirname, 'gamelist.json'), gamelist);
+      fs.mkdir(path.join(destDir, gameName), () => {
+        fs.readdir(distDir, (err, files) => {
+          if (err) {
+            throw new Error(
+              `Can't read dist dir of module ${gameModule}: ${err}`
+            );
+          }
+          if (!files.includes('client.js')) {
+            throw new Error(
+              `Can't find client.js file in dist dir of module ${gameModule}`
+            );
+          }
+          files.forEach(file => {
+            const sourcePath = path.join(distDir, file);
+            const destPath = path.join(destDir, gameName, file);
+            fs.createReadStream(sourcePath).pipe(
+              fs.createWriteStream(destPath)
+            );
+          });
+        });
+      });
+    });
+  });
+
+  fs.mkdir(destDir, () => {
+    const configPath = path.join(destDir, 'configurations.js');
+    bundler.bundle().pipe(fs.createWriteStream(configPath));
+  });
+
+  jsonfile.writeFileSync(path.join(__dirname, 'gamelist.json'), gamelist);
 });
