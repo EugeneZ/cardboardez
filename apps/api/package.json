@@ -1,0 +1,36 @@
+{
+  "name": "@cardboardez/api",
+  "version": "1.0.0",
+  "description": "API for CardboardEZ (the server)",
+  "main": "index.js",
+  "repository": "https://github.com/EugeneZ/cardboardez/apps/api",
+  "author": "Eugene Zaretskiy <eugene.zar@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "body-parser": "^1.10.2",
+    "cardboardez-game-nicknames": "^0.0.3",
+    "cardboardez-game-summit": "^0.0.5",
+    "cardboardez-game-trixit": "^0.0.5",
+    "compression": "^1.7.1",
+    "config": "^1.27.0",
+    "cors": "^2.8.4",
+    "feathers": "^2.0.2",
+    "feathers-authentication-hooks": "^0.1.5",
+    "feathers-errors": "^2.9.2",
+    "feathers-hooks": "^2.1.0",
+    "feathers-hooks-common": "^3.10.0",
+    "feathers-rest": "^1.8.0",
+    "feathers-rethinkdb": "^0.4.3",
+    "feathers-socketio": "^2.0.0",
+    "glob": "^7.1.1",
+    "jsonfile": "^4.0.0",
+    "jsonwebtoken": "^8.1.0",
+    "lodash": "^4.16.2",
+    "node-fetch": "^1.7.3",
+    "rethinkdbdash": "^2.3.31"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.1"
+  }
+}

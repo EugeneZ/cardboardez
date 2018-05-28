@@ -2,6 +2,7 @@
   "name": "cardboardez",
   "description": "CardboardEZ is a tool that helps simulate various tabletop games.",
   "author": "Eugene Zaretskiy",
+  "private": true,
   "version": "0.0.1",
   "main": "src/server.js",
   "scripts": {
@@ -9,28 +10,12 @@
     "start": "node src/server.js",
     "test": "cross-env NODE_ENV=test jwt_secret=test node test/e2e.js"
   },
+  "workspaces": [
+    "apps/*",
+    "games/*"
+  ],
   "dependencies": {
-    "body-parser": "^1.10.2",
-    "cardboardez-game-nicknames": "^0.0.3",
-    "cardboardez-game-summit": "^0.0.5",
-    "cardboardez-game-trixit": "^0.0.5",
-    "compression": "^1.7.1",
-    "config": "^1.27.0",
-    "cors": "^2.8.4",
-    "feathers": "^2.0.2",
-    "feathers-authentication-hooks": "^0.1.5",
-    "feathers-errors": "^2.9.2",
-    "feathers-hooks": "^2.1.0",
-    "feathers-hooks-common": "^3.10.0",
-    "feathers-rest": "^1.8.0",
-    "feathers-rethinkdb": "^0.4.3",
-    "feathers-socketio": "^2.0.0",
-    "glob": "^7.1.1",
-    "jsonfile": "^4.0.0",
-    "jsonwebtoken": "^8.1.0",
-    "lodash": "^4.16.2",
-    "node-fetch": "^1.7.3",
-    "rethinkdbdash": "^2.3.31"
+    "config": "^1.27.0"
   },
   "devDependencies": {
     "cross-env": "^5.1.1",

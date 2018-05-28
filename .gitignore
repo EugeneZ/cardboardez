@@ -6,7 +6,7 @@
 .settings
 /atlassian-ide-plugin.xml
 /cardboardez.iml
-/node_modules
+node_modules/
 /npm-debug.log
 /public/assets/*
 gamelist.json
