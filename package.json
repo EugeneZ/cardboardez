@@ -6,9 +6,7 @@
   "version": "0.0.1",
   "main": "src/server.js",
   "scripts": {
-    "precommit": "lint-staged",
-    "start": "node src/server.js",
-    "test": "cross-env NODE_ENV=test jwt_secret=test node test/e2e.js"
+    "precommit": "lint-staged"
   },
   "workspaces": [
     "apps/*",

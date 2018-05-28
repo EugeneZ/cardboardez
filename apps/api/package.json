@@ -2,11 +2,13 @@
   "name": "@cardboardez/api",
   "version": "1.0.0",
   "description": "API for CardboardEZ (the server)",
-  "main": "index.js",
   "repository": "https://github.com/EugeneZ/cardboardez/apps/api",
   "author": "Eugene Zaretskiy <eugene.zar@gmail.com>",
   "license": "MIT",
-  "private": false,
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "cross-env NODE_ENV=test jwt_secret=test node test/e2e.js"
+  },
   "dependencies": {
     "body-parser": "^1.10.2",
     "cardboardez-game-nicknames": "^0.0.3",
