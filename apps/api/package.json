@@ -10,10 +10,8 @@
     "test": "cross-env NODE_ENV=test jwt_secret=test node test/e2e.js"
   },
   "dependencies": {
+    "@cardboardez/summit": "^1.0.0",
     "body-parser": "^1.10.2",
-    "cardboardez-game-nicknames": "^0.0.3",
-    "cardboardez-game-summit": "^0.0.5",
-    "cardboardez-game-trixit": "^0.0.5",
     "compression": "^1.7.1",
     "config": "^1.27.0",
     "cors": "^2.8.4",

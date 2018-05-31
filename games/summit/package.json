@@ -1,0 +1,42 @@
+{
+  "name": "@cardboardez/summit",
+  "version": "1.0.0",
+  "description": "A game similar to One Night Ultimate Werewolf implemented for digital play",
+  "main": "server.js",
+  "repository": "https://github.com/EugeneZ/cardboardez/games/summit",
+  "author": "Eugene Zaretskiy <eugene.zar@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "browserify -r ./client/client:cardboardez-game-summit-client -x react -x react-dom -x material-ui -t babelify -o dist/client.js",
+    "prepublish": "npm run build",
+    "watchify": "watchify -r ./client/client:cardboardez-game-summit-client -x react -x react-dom -x material-ui -t babelify -o dist/client.js",
+    "test": "tape -r babel-register \"test/unit/**/*.js\""
+  },
+  "peerDependencies": {
+    "material-ui": "^0.16.7",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-tap-event-plugin": "^1.0.0 || ^2.0.0"
+  },
+  "dependencies": {
+    "autobind-decorator": "^1.3.4",
+    "lodash": "^4.16.2",
+    "moment": "^2.17.1"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-function-bind": "^6.8.0",
+    "babel-preset-latest": "^6.14.0",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "babelify": "^7.3.0",
+    "browserify": "^14.0.0",
+    "deep-diff": "^0.3.8",
+    "material-ui": "^0.16.7",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "rewire": "^2.5.2",
+    "tape": "^4.6.0",
+    "watchify": "^3.9.0"
+  }
+}
