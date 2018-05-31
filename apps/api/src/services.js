@@ -8,6 +8,7 @@ module.exports = function(app, dbPromise) {
   return Promise.all([
     require('./services/games')(app, dbPromise),
     require('./services/token')(app, dbPromise),
-    require('./services/users')(app, dbPromise)
+    require('./services/users')(app, dbPromise),
+    require('./services/gameInfo')(app)
   ]);
 };
