@@ -115,8 +115,8 @@ module.exports = function createGamesService(app, dbPromise) {
         const { hasPlayer } = hook.params;
 
         if (hasPlayer) {
+          // eslint-disable-next-line no-param-reassign
           hook.result = hook.result.filter(
-            // eslint-disable-line no-param-reassign
             game => game.players.indexOf(hasPlayer) !== -1
           );
         }
@@ -154,8 +154,8 @@ module.exports = function createGamesService(app, dbPromise) {
           userIds.map(id => app.service('users').get(id))
         );
 
+        // eslint-disable-next-line no-param-reassign
         hook.result = hook.result.map(game => ({
-          // eslint-disable-line no-param-reassign
           ...game,
           _meta: {
             name: game.game,
