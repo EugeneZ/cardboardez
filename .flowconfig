@@ -1,3 +1,14 @@
 [ignore]
 .*/node_modules/config-chain/test/broken.json
 .*/node_modules/npmconf/test/.*
+.*/node_modules/watchify/node_modules/module-deps/test/invalid_pkg/package.json
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]

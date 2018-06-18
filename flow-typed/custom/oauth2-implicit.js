@@ -1,4 +1,4 @@
-//@flow
+// @flow
 declare module 'oauth2-implicit' {
   declare type State = { [string]: string };
 

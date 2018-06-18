@@ -1,4 +1,4 @@
-//@flow
+// @flow
 declare var module: {
   hot: {
     accept: (() => void) => void,
