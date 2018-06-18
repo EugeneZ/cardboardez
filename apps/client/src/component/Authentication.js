@@ -1,13 +1,13 @@
-//@flow
+// @flow
 import React, { PureComponent } from 'react';
-import Button from 'material-ui/Button';
-import Icon from 'material-ui/Icon';
-import fetch from '../util/fetch';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 import { start, finish } from 'oauth2-implicit';
+import store from 'store';
+import fetch from '../util/fetch';
 import { OAUTH2_PATH } from './Container';
 import config from '../config';
 import type { User } from '../types';
-import store from 'store';
 
 const STORE_KEY = '_authToken';
 
@@ -25,6 +25,8 @@ const styles = {
     marginRight: 10
   }
 };
+
+const { location } = global;
 
 const providers = [
   {
@@ -54,7 +56,19 @@ export default class Authentication extends PureComponent<Props, State> {
     error: null
   };
 
-  gotUserToken = ({ user, token }: { user: User, token: string }) => {
+  componentDidMount() {
+    const { accessToken } = finish() || {};
+    const storedToken = store.get(STORE_KEY);
+
+    if (accessToken) {
+      this.postGoogleToken(accessToken);
+    } else if (storedToken) {
+      this.verifyAuthToken(storedToken);
+    }
+  }
+
+  gotUserToken = (response: { user: User, token: string }) => {
+    const { user, token } = response;
     this.setState({ loggedIn: true });
     store.set(STORE_KEY, token);
     this.props.onLoggedIn({ token, user });
@@ -80,17 +94,6 @@ export default class Authentication extends PureComponent<Props, State> {
     })
       .then(this.gotUserToken)
       .catch(this.gotError);
-
-  componentDidMount() {
-    const { accessToken } = finish() || {};
-    const storedToken = store.get(STORE_KEY);
-
-    if (accessToken) {
-      this.postGoogleToken(accessToken);
-    } else if (storedToken) {
-      this.verifyAuthToken(storedToken);
-    }
-  }
 
   render() {
     const { loggedIn, error } = this.state;

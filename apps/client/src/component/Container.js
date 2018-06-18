@@ -1,33 +1,64 @@
-//@flow
+// @flow
 import React, { PureComponent } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import mapValues from 'lodash/fp/mapValues';
 import Authentication from './Authentication';
-import type { User, Fetch } from '../types';
+import type { User, Fetch, State } from '../types';
 import App from './App';
-import { createAuthorizedFetch, type FetchOptions } from '../util/fetch';
-import Games from './Games';
-import NewGame from './NewGame';
+import { createAuthorizedFetch } from '../util/fetch';
+import ManageFriends from './ManageFriends';
+import { addFriend, removeFriend } from '../services';
 
 export const OAUTH2_PATH = '/oauth2';
 
-type State = {
-  user: ?User,
-  fetch: ?Fetch<any>
+const actionMap = {
+  addFriend,
+  removeFriend
 };
 
-export default class Container extends PureComponent<{}, State> {
+type CState = {
+  user: ?User,
+  fetch: ?Fetch<any>,
+  state: State
+};
+
+export default class Container extends PureComponent<{}, CState> {
+  constructor(props) {
+    super(props);
+
+    this.actions = mapValues(action => () =>
+      action(this.state.fetch, this.state.state).then(state =>
+        this.setState({ state })
+      )
+    )(actionMap);
+  }
+
   state = {
     user: null,
-    fetch: null
+    fetch: null,
+    state: {
+      users: [],
+      friends: [],
+      games: []
+    }
   };
+
+  handleLoggedIn = (response: { user: User, token: string }) => {
+    const { user, token } = response;
+    const fetch = createAuthorizedFetch(token);
+    this.setState({ user, fetch });
+  };
+
+  handleRequestLogout = () => this.setState({ user: null, fetch: null });
 
   render() {
     const { user, fetch } = this.state;
+    const { actions } = this;
 
     return (
       <BrowserRouter>
         <Route path="/oauth2">
-          {({ match, history }) => (
+          {({ history }) => (
             <App
               user={user}
               onRequestLogout={this.handleRequestLogout}
@@ -38,12 +69,13 @@ export default class Container extends PureComponent<{}, State> {
                 fetch && (
                   <Switch>
                     <Route
-                      path="/games"
-                      render={() => <Games fetch={fetch} />}
-                    />
-                    <Route
-                      path="/newgame"
-                      render={() => <NewGame fetch={fetch} user={user} />}
+                      path="/friends"
+                      render={() => (
+                        <ManageFriends
+                          onAddFriend={actions.addFriend}
+                          onRemoveFriend={actions.removeFriend}
+                        />
+                      )}
                     />
                   </Switch>
                 )}
@@ -53,11 +85,4 @@ export default class Container extends PureComponent<{}, State> {
       </BrowserRouter>
     );
   }
-
-  handleLoggedIn = ({ user, token }: { user: User, token: string }) => {
-    const fetch = createAuthorizedFetch(token);
-    this.setState({ user, fetch });
-  };
-
-  handleRequestLogout = () => this.setState({ user: null, fetch: null });
 }

@@ -9,3 +9,9 @@ export type User = {
 };
 
 export type Game = {};
+
+export type State = {
+  friends: Array<User>,
+  users: Array<User>,
+  games: Array<Game>
+};

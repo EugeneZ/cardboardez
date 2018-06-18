@@ -1,14 +1,14 @@
-//@flow
+// @flow
 import React, { PureComponent, type Node } from 'react';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
-import Menu from 'material-ui/Menu/Menu';
-import { MenuItem } from 'material-ui/Menu';
-import type { User } from '../types';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import type { RouterHistory } from 'react-router-dom';
+import type { User } from '../types';
 
 type Props = {
   children: Node,
@@ -26,8 +26,23 @@ export default class App extends PureComponent<Props, State> {
     menuEl: null
   };
 
+  handleMenu = (event: SyntheticEvent<HTMLButtonElement>) => {
+    this.setState({ menuEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ menuEl: null });
+  };
+
+  handleNavigate = (path: string) => {
+    const { history } = this.props;
+
+    this.setState({ menuEl: null });
+    history.push(path);
+  };
+
   render() {
-    const { user, children, onRequestLogout, history } = this.props;
+    const { user, children, onRequestLogout } = this.props;
     const { menuEl } = this.state;
 
     return (
@@ -40,7 +55,7 @@ export default class App extends PureComponent<Props, State> {
             {user && (
               <div>
                 <IconButton
-                  aria-owns={open ? 'menu-appbar' : null}
+                  aria-owns={menuEl ? 'menu-appbar' : null}
                   aria-haspopup="true"
                   onClick={this.handleMenu}
                   color="inherit"
@@ -82,19 +97,4 @@ export default class App extends PureComponent<Props, State> {
       </div>
     );
   }
-
-  handleMenu = (event: SyntheticEvent<HTMLButtonElement>) => {
-    this.setState({ menuEl: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ menuEl: null });
-  };
-
-  handleNavigate = (path: string) => {
-    const { history } = this.props;
-
-    this.setState({ menuEl: null });
-    history.push(path);
-  };
 }
