@@ -13,17 +13,17 @@ const secret = process.env.jwt_secret;
 const validTokens = new Set();
 
 async function validateProviderAndGetOrCreateUser(app, providerToken) {
-  const { error, sub, user_id } = await fetch(
+  const { error, sub, user_id: userId } = await fetch(
     `${googleConfig.tokenInfoURL}?access_token=${providerToken}`
   ).then(response => response.json());
 
-  if (error || (!user_id && !sub)) {
+  if (error || (!userId && !sub)) {
     throw new NotFound(`Can't validate token`, error);
   }
 
-  const id = user_id || sub;
+  const id = userId || sub;
 
-  const users = app.service('users');
+  const users = app.service('private/users');
 
   const existingUsers = await users.find({ query: { googleId: id } });
   if (existingUsers && existingUsers.length) {
@@ -38,7 +38,7 @@ async function validateProviderAndGetOrCreateUser(app, providerToken) {
     throw new Error(`Invalid google profile response`, profile.error);
   }
 
-  return await users.create({
+  return users.create({
     googleId: id,
     google: profile
   });
@@ -75,17 +75,18 @@ function getAccessToken(authorization) {
 }
 
 function attachHeaders(req, res, next) {
-  const headers = (req.params.headers = req.params.headers || {});
+  req.params.headers = req.params.headers || {};
+  const { headers } = req.params;
   headers.authorization = req.get('authorization');
   next();
 }
 
-module.exports = function() {
-  return function() {
+module.exports = function createAuthenticationService() {
+  return function authenticationService() {
     const app = this;
 
     // Checks for authentication token and decorates the application if the user is authenticated
-    app.use(attachHeaders, async function(req, res, next) {
+    app.use(attachHeaders, async (req, res, next) => {
       try {
         validateHeaders(req.headers);
 
@@ -120,12 +121,9 @@ module.exports = function() {
       async create(data, { headers }) {
         validateHeaders(headers);
 
-        const access_token = getAccessToken(headers.authorization);
+        const accessToken = getAccessToken(headers.authorization);
 
-        const user = await validateProviderAndGetOrCreateUser(
-          app,
-          access_token
-        );
+        const user = await validateProviderAndGetOrCreateUser(app, accessToken);
 
         const token = jwt.sign({ id: user.id }, secret, { expiresIn: '1d' });
 
@@ -137,22 +135,20 @@ module.exports = function() {
       async remove(id, { headers }) {
         validateHeaders(headers);
 
-        const access_token = getAccessToken(headers.authorization);
+        const accessToken = getAccessToken(headers.authorization);
 
-        await validateTokenAndGetUser(app, access_token);
+        await validateTokenAndGetUser(app, accessToken);
 
-        validTokens.delete(access_token);
+        validTokens.delete(accessToken);
 
-        return access_token;
+        return accessToken;
       }
     });
   };
 };
 
-module.exports.authenticate = function() {
-  return async function(hook) {
-    const app = hook.app;
-
+module.exports.authenticate = function createAuthenticationHook() {
+  return async function authenticateHook(hook) {
     // If called internally or we are already authenticated skip
     if (!hook.params.provider || hook.params.authenticated) {
       return hook;

@@ -54,7 +54,7 @@ function createNewGameData(data) {
   return Object.assign(data, starterGame);
 }
 
-module.exports = function(app, dbPromise) {
+module.exports = function createGamesService(app, dbPromise) {
   function updateBasedOnGameAction(hook) {
     return app
       .service(ENDPOINT)
@@ -64,13 +64,13 @@ module.exports = function(app, dbPromise) {
         if (game.players.indexOf(hook.params.user.id) === -1) {
           throw new Error('Cannot update a game you are not in');
         } else {
-          hook.data.user = hook.params.user;
+          hook.data.user = hook.params.user; // eslint-disable-line no-param-reassign
         }
 
         const module = gameProvider.getGameServerModule(game);
         module[game.mode](hook.data, game);
-        hook.data = game;
-        hook.data.updated = new Date();
+        hook.data = game; // eslint-disable-line no-param-reassign
+        hook.data.updated = new Date(); // eslint-disable-line no-param-reassign
       });
   }
 
@@ -86,8 +86,8 @@ module.exports = function(app, dbPromise) {
        * this value.
        */
       find(hook) {
-        const { params } = hook,
-          { query } = params;
+        const { params } = hook;
+        const { query } = params;
 
         if (query.hasPlayer) {
           params.hasPlayer = query.hasPlayer;
@@ -98,7 +98,7 @@ module.exports = function(app, dbPromise) {
       create(hook) {
         const module = gameProvider.getGameServerModule(hook.data);
         module.setup(createNewGameData(hook.data));
-        hook.data.updated = new Date();
+        hook.data.updated = new Date(); // eslint-disable-line no-param-reassign
       },
 
       update: updateBasedOnGameAction,
@@ -116,6 +116,7 @@ module.exports = function(app, dbPromise) {
 
         if (hasPlayer) {
           hook.result = hook.result.filter(
+            // eslint-disable-line no-param-reassign
             game => game.players.indexOf(hasPlayer) !== -1
           );
         }
@@ -125,7 +126,7 @@ module.exports = function(app, dbPromise) {
     /**
      * Only emit events about games to users who are playing that game.
      */
-    app.service(ENDPOINT).filter(function(data, connection) {
+    app.service(ENDPOINT).filter((data, connection) => {
       if (data.players.indexOf(connection.user.id) === -1) {
         return false;
       }
@@ -138,9 +139,9 @@ module.exports = function(app, dbPromise) {
      * as well as the _private field for all players except the one requesting the information
      */
     app.service(ENDPOINT).hooks({
-      after: async function(hook) {
+      async after(hook) {
         if (hook.params.provider) {
-          hook.result = cleanGameData(hook.result, hook.params.user.id);
+          hook.result = cleanGameData(hook.result, hook.params.user.id); // eslint-disable-line no-param-reassign
         }
 
         // Fetch player data
@@ -154,11 +155,12 @@ module.exports = function(app, dbPromise) {
         );
 
         hook.result = hook.result.map(game => ({
+          // eslint-disable-line no-param-reassign
           ...game,
           _meta: {
             name: game.game,
             players: game._players.map(({ id }) => {
-              const user = users.find(user => user.id === id);
+              const user = users.find(u => u.id === id);
               return {
                 id,
                 name: user ? user.name : 'Player Not Found'
@@ -171,8 +173,8 @@ module.exports = function(app, dbPromise) {
       }
     });
 
-    app.service(ENDPOINT).filter(function(data, connection) {
-      return cleanGameData(data, connection.user.id);
-    });
+    app
+      .service(ENDPOINT)
+      .filter((data, connection) => cleanGameData(data, connection.user.id));
   });
 };

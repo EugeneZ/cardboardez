@@ -10,13 +10,13 @@ const db = rethinkdbdash({
   ssl: cert && { ca: cert }
 });
 
-const INITIAL_TABLES = ['users', 'actions', 'games', 'token'];
+const INITIAL_TABLES = ['users', 'actions', 'games', 'friends'];
 
 /**
  * Sets up the RethinkDB database and connection pool. Also creates tables, see list above.
  * @type {Promise.<TResult>} Promise that resolves when the connection is ready.
  */
-module.exports = function() {
+module.exports = function createDb() {
   return db
     .dbList()
     .contains(config.db.name)
@@ -27,22 +27,19 @@ module.exports = function() {
 
     .then(() => {
       const promises = [];
-      for (var i in INITIAL_TABLES) {
+      INITIAL_TABLES.forEach(table => {
         promises.push(
           db
             .db(config.db.name)
             .tableList()
-            .contains(INITIAL_TABLES[i])
+            .contains(table)
             .do(tableExists =>
-              db.branch(
-                tableExists,
-                { created: 0 },
-                db.tableCreate(INITIAL_TABLES[i])
-              )
+              db.branch(tableExists, { created: 0 }, db.tableCreate(table))
             )
             .run()
         );
-      }
+      });
+
       return Promise.all(promises);
     })
 

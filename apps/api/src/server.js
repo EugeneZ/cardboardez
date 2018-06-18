@@ -39,7 +39,7 @@ const serverPromise = Promise.all([dbPromise, servicesPromise]).then(
         reject(err);
       }
     }),
-  err => console.log('Failed to start: ', err)
+  err => console.error('Failed to start: ', err) // eslint-disable-line no-console
 );
 
 module.exports = {

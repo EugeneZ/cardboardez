@@ -1,52 +1,56 @@
-const dbService = require('feathers-rethinkdb');
 const { disallow, pluck } = require('feathers-hooks-common');
 const { restrictToOwner } = require('feathers-authentication-hooks');
+const config = require('config');
 const { authenticate, attachHeaders } = require('./authentication');
 
-module.exports = async function(app, dbPromise) {
-  app.use(
-    'users',
-    attachHeaders,
-    dbService({ Model: await dbPromise, name: 'users' })
-  );
+module.exports = async function createUsersService(app) {
+  const userDB = () => app.service('private/users');
 
-  const users = app.service('users');
+  class UserService {
+    async find(params) {
+      const users = await userDB().find(params);
+      return users.map(({ id, name }) => ({ id, name }));
+    }
+
+    async get(userId) {
+      const { id, name } = await userDB().get(userId);
+      return { id, name };
+    }
+
+    create(data) {
+      let name;
+      const { facebook, github, google, vimeo } = data;
+      if (github) {
+        name = github.login;
+      } else if (facebook) {
+        ({ name } = facebook);
+      } else if (google) {
+        name = google.displayName;
+      } else if (vimeo) {
+        ({ name } = vimeo);
+      } else {
+        throw new Error('invalid provider');
+      }
+
+      return userDB().create({ ...data, name });
+    }
+
+    patch(id, data) {
+      return userDB().patch(id, data);
+    }
+  }
+
+  const service = new UserService();
+  app.use(`${config.get('api')}/users`, attachHeaders, service);
+
+  const users = app.service(`${config.get('api')}/users`);
 
   users.before({
     create: [disallow('external')],
-    update: [disallow()],
     patch: [
       authenticate(),
       restrictToOwner({ idField: 'id', ownerField: 'id' }),
       pluck('id', 'name')
-    ],
-    remove: [disallow('external')]
-  });
-
-  users.after({
-    get: pluck('id', 'name'),
-    find: pluck('id', 'name')
-  });
-
-  // TODO: When this bug is fixed in feathers, move this to a hook. https://github.com/feathersjs/feathers/issues/376
-  users.filter(function(data) {
-    return { id: data.id, name: data.name };
-  });
-
-  users.before({
-    create(hook) {
-      const { facebook, github, google, vimeo } = hook.data;
-      if (github) {
-        hook.data.name = github.login;
-      } else if (facebook) {
-        hook.data.name = facebook.name;
-      } else if (google) {
-        hook.data.name = google.displayName;
-      } else if (vimeo) {
-        hook.data.name = vimeo.name;
-      } else {
-        console.log(require('util').inspect(hook));
-      }
-    }
+    ]
   });
 };
