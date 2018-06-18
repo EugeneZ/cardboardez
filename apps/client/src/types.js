@@ -1,6 +1,4 @@
-//@flow
-export type Fetch<T> = (url: string, options?: FetchOptions) => Promise<T>;
-
+// @flow
 export type User = {
   google?: mixed,
   googleId?: string,
@@ -11,7 +9,18 @@ export type User = {
 export type Game = {};
 
 export type State = {
+  app: {
+    loggedIn: boolean,
+    user: ?User
+  },
+  errors: Array<string>,
   friends: Array<User>,
   users: Array<User>,
   games: Array<Game>
+};
+
+export type Actions = {
+  getUsers: () => void,
+  addFriend: (id: string) => void,
+  removeFriend: (id: string) => void
 };

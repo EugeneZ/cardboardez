@@ -23,7 +23,7 @@ type State = {
   search: string
 };
 
-export default class AddFriend extends PureComponent<Props, State> {
+export default class Friends extends PureComponent<Props, State> {
   state = {
     search: ''
   };

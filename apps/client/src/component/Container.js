@@ -1,77 +1,45 @@
 // @flow
 import React, { PureComponent } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import mapValues from 'lodash/fp/mapValues';
 import Authentication from './Authentication';
-import type { User, Fetch, State } from '../types';
+import type { State, Actions, User } from '../types';
 import App from './App';
-import { createAuthorizedFetch } from '../util/fetch';
 import ManageFriends from './ManageFriends';
-import { addFriend, removeFriend } from '../services';
 
 export const OAUTH2_PATH = '/oauth2';
 
-const actionMap = {
-  addFriend,
-  removeFriend
+type Props = {
+  state: State,
+  actions: Actions,
+  onLoggedIn: ({ token: string, user: User }) => mixed,
+  onRequestLogout: () => mixed
 };
 
-type CState = {
-  user: ?User,
-  fetch: ?Fetch<any>,
-  state: State
-};
-
-export default class Container extends PureComponent<{}, CState> {
-  constructor(props) {
-    super(props);
-
-    this.actions = mapValues(action => () =>
-      action(this.state.fetch, this.state.state).then(state =>
-        this.setState({ state })
-      )
-    )(actionMap);
-  }
-
-  state = {
-    user: null,
-    fetch: null,
-    state: {
-      users: [],
-      friends: [],
-      games: []
-    }
-  };
-
-  handleLoggedIn = (response: { user: User, token: string }) => {
-    const { user, token } = response;
-    const fetch = createAuthorizedFetch(token);
-    this.setState({ user, fetch });
-  };
-
-  handleRequestLogout = () => this.setState({ user: null, fetch: null });
-
+export default class Container extends PureComponent<Props> {
   render() {
-    const { user, fetch } = this.state;
-    const { actions } = this;
+    const { actions, state, onLoggedIn, onRequestLogout } = this.props;
+    const { app, friends, users } = state;
+    const { user, loggedIn } = app;
 
     return (
       <BrowserRouter>
-        <Route path="/oauth2">
+        <Route>
           {({ history }) => (
             <App
               user={user}
-              onRequestLogout={this.handleRequestLogout}
+              onRequestLogout={onRequestLogout}
               history={history}
             >
-              {!user && <Authentication onLoggedIn={this.handleLoggedIn} />}
+              {!loggedIn && <Authentication onLoggedIn={onLoggedIn} />}
               {user &&
-                fetch && (
+                loggedIn && (
                   <Switch>
                     <Route
                       path="/friends"
                       render={() => (
                         <ManageFriends
+                          friends={friends}
+                          users={users}
                           onAddFriend={actions.addFriend}
                           onRemoveFriend={actions.removeFriend}
                         />

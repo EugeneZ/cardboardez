@@ -1,8 +1,8 @@
-//@flow
+// @flow
 import React, { PureComponent } from 'react';
 import { CircularProgress } from 'material-ui/Progress';
 
-export default class FullPageLoading extends PureComponent {
+export default class FullPageLoading extends PureComponent<{}> {
   render() {
     return (
       <div
