@@ -55,7 +55,7 @@ async function validateTokenAndGetUser(app, token) {
 
   const { id } = jwt.verify(token, secret);
 
-  const user = await app.service('users').get(id);
+  const user = await app.service('private/users').get(id);
 
   if (!user) {
     throw new GeneralError('User not found (was the user removed?)');

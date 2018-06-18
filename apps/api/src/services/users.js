@@ -8,7 +8,7 @@ module.exports = async function createUsersService(app) {
 
   class UserService {
     async find(params) {
-      const users = await userDB().find(params);
+      const users = await userDB().find();
       return users.map(({ id, name }) => ({ id, name }));
     }
 
