@@ -1,4 +1,4 @@
-const { disallow, pluck } = require('feathers-hooks-common');
+const { disallow } = require('feathers-hooks-common');
 const { restrictToOwner } = require('feathers-authentication-hooks');
 const config = require('config');
 const { authenticate, attachHeaders } = require('./authentication');
@@ -36,7 +36,9 @@ module.exports = async function createUsersService(app) {
     }
 
     patch(id, data) {
-      return userDB().patch(id, data);
+      return userDB()
+        .patch(id, data)
+        .map(({ id, name }) => ({ id, name }));
     }
   }
 
@@ -50,8 +52,7 @@ module.exports = async function createUsersService(app) {
       create: [disallow('external')],
       patch: [
         authenticate(),
-        restrictToOwner({ idField: 'id', ownerField: 'id' }),
-        pluck('id', 'name')
+        restrictToOwner({ idField: 'id', ownerField: 'id' })
       ]
     }
   });
