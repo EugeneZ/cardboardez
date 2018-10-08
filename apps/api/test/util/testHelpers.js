@@ -33,11 +33,11 @@ module.exports.authenticateRequest = function authenticateRequest({
 };
 
 module.exports.getUsers = async function getUsers() {
-  return fetch(baseURL + '/users').then(response => response.json());
+  return fetch(baseURL + '/api/users').then(response => response.json());
 };
 
 module.exports.getUser = async function getUser(id) {
-  return fetch(baseURL + '/users/' + id).then(response => response.json());
+  return fetch(baseURL + '/api/users/' + id).then(response => response.json());
 };
 
 module.exports.setupUsers = function setupUsers(users) {

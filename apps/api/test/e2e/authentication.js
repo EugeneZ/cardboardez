@@ -38,7 +38,7 @@ tape(
     test.ok(jsonPOST.token, 'POST sends a jwt');
     test.ok(jsonPOST.user, 'POST sends a user');
     test.strictEquals(
-      jsonPOST.user.name,
+      jsonPOST.user.google.displayName,
       'Test User',
       'POST sends correct user'
     );
@@ -49,7 +49,11 @@ tape(
 
     test.ok(rawGET.ok, 'GET sends ok status code');
     test.ok(jsonGET.user, 'GET sends a user');
-    test.strictEquals(jsonGET.user.name, 'Test User', 'GET sends correct user');
+    test.strictEquals(
+      jsonGET.user.google.displayName,
+      'Test User',
+      'GET sends correct user'
+    );
 
     const [rawDELETE] = await authenticateRequest({
       authorization: jsonPOST.token,
