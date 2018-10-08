@@ -5,15 +5,13 @@
   "private": true,
   "version": "0.0.1",
   "main": "src/server.js",
-  "scripts": {
-    "precommit": "lint-staged"
-  },
   "workspaces": [
     "apps/*",
     "games/summit"
   ],
   "dependencies": {
-    "config": "^1.27.0"
+    "config": "^1.27.0",
+    "husky": "^1.1.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
@@ -27,8 +25,7 @@
     "eslint-plugin-react": "^7.9.0",
     "flow-bin": "^0.74.0",
     "glow": "^1.2.2",
-    "husky": "^0.14.3",
-    "lint-staged": "^7.1.2",
+    "lint-staged": "7",
     "prettier": "1.13.0",
     "tape": "^4.6.0"
   },
@@ -37,5 +34,10 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
