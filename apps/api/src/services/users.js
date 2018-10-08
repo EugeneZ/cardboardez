@@ -2,6 +2,7 @@ const { disallow } = require('feathers-hooks-common');
 const { restrictToOwner } = require('feathers-authentication-hooks');
 const config = require('config');
 const { authenticate, attachHeaders } = require('./authentication');
+const docs = require('./users.docs');
 
 module.exports = async function createUsersService(app) {
   const userDB = () => app.service('private/users');
@@ -43,6 +44,7 @@ module.exports = async function createUsersService(app) {
   }
 
   const service = new UserService();
+  service.docs = docs;
   app.use(`${config.get('api')}/users`, attachHeaders, service);
 
   const users = app.service(`${config.get('api')}/users`);

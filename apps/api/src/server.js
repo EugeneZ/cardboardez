@@ -7,6 +7,7 @@ const authentication = require('./services/authentication');
 const services = require('./services');
 const db = require('./db');
 const cors = require('cors');
+const swagger = require('feathers-swagger');
 
 const app = express(feathers());
 
@@ -20,6 +21,17 @@ app.use(express.urlencoded({ extended: true }));
 app.configure(express.rest());
 app.configure(socketio());
 app.configure(authentication());
+app.configure(
+  swagger({
+    prefix: /api\//,
+    uiIndex: true,
+    docsPath: '/docs',
+    info: {
+      title: 'CardboardEZ',
+      version: '1.0.0'
+    }
+  })
+);
 
 const servicesPromise = services(app, dbPromise);
 
