@@ -14,3 +14,4 @@ npm-debug.*
 
 db\.json
 launch.json
+.cache
