@@ -1,4 +1,5 @@
-const feathers = require('feathers');
+const feathers = require('@feathersjs/feathers');
+const express = require('@feathersjs/express');
 
 const googleId = id => 'testgoogleid' + id;
 
@@ -76,7 +77,7 @@ function googleProfile({ query: { token } }, res, next) {
 function newServer() {
   return new Promise((resolve, reject) => {
     try {
-      const server = feathers()
+      const server = express(feathers())
         .use(authorizationMiddleware)
         .get('/tokeninfo', tokeninfo)
         .get('/profile/google', googleProfile)

@@ -105,7 +105,7 @@ module.exports = function createAuthenticationService() {
 
     // Actual authentication services
     app.use('authenticate', attachHeaders, {
-      async find({ headers }) {
+      async find({ route: { headers } }) {
         validateHeaders(headers);
 
         const token = getAccessToken(headers.authorization);
@@ -118,7 +118,12 @@ module.exports = function createAuthenticationService() {
         };
       },
 
-      async create(data, { headers }) {
+      async create(
+        data,
+        {
+          route: { headers }
+        }
+      ) {
         validateHeaders(headers);
 
         const accessToken = getAccessToken(headers.authorization);
@@ -132,7 +137,12 @@ module.exports = function createAuthenticationService() {
         return { token, user };
       },
 
-      async remove(id, { headers }) {
+      async remove(
+        id,
+        {
+          route: { headers }
+        }
+      ) {
         validateHeaders(headers);
 
         const accessToken = getAccessToken(headers.authorization);

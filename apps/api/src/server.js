@@ -1,34 +1,30 @@
 const config = require('config');
-const feathers = require('feathers');
-const rest = require('feathers-rest');
-const socketio = require('feathers-socketio');
-const hooks = require('feathers-hooks');
-const bodyParser = require('body-parser');
+const feathers = require('@feathersjs/feathers');
+const express = require('@feathersjs/express');
+const socketio = require('@feathersjs/socketio');
 const compression = require('compression');
-const errorHandler = require('feathers-errors/handler');
 const authentication = require('./services/authentication');
 const services = require('./services');
 const db = require('./db');
 const cors = require('cors');
 
-const app = feathers();
+const app = express(feathers());
 
 const dbPromise = db();
 
 app.use(cors());
 app.use(compression());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(feathers.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.configure(hooks());
-app.configure(rest());
+app.configure(express.rest());
 app.configure(socketio());
 app.configure(authentication());
 
 const servicesPromise = services(app, dbPromise);
 
-app.use(errorHandler());
+app.use(express.notFound());
+app.use(express.errorHandler());
 
 const serverPromise = Promise.all([dbPromise, servicesPromise]).then(
   () =>

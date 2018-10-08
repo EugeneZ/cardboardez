@@ -77,104 +77,89 @@ module.exports = function createGamesService(app, dbPromise) {
   return dbPromise.then(r => {
     app.use(ENDPOINT, dbService({ Model: r, name: 'games' }));
 
-    app.service(ENDPOINT).before(authenticate());
-
-    app.service(ENDPOINT).before({
-      /**
-       * This hook removes the 'hasPlayer' query param from the client so that we can do our own manual processing
-       * in the after hook. If this wasn't here, the db service would look for games with a 'hasPlayer' field with
-       * this value.
-       */
-      find(hook) {
-        const { params } = hook;
-        const { query } = params;
-
-        if (query.hasPlayer) {
-          params.hasPlayer = query.hasPlayer;
-          delete query.hasPlayer;
-        }
-      },
-
-      create(hook) {
-        const module = gameProvider.getGameServerModule(hook.data);
-        module.setup(createNewGameData(hook.data));
-        hook.data.updated = new Date(); // eslint-disable-line no-param-reassign
-      },
-
-      update: updateBasedOnGameAction,
-      patch: hooks.disallow('external'),
-      remove: hooks.disallow('external')
-    });
-
-    /**
-     * If the 'hasPlayer' query param was passed in to the service, it has been moved from the query to the params
-     * themselves to avoid collision with actual db queries. We now use this field to return only the relevant games.
-     */
-    app.service(ENDPOINT).after({
-      find(hook) {
-        const { hasPlayer } = hook.params;
-
-        if (hasPlayer) {
-          // eslint-disable-next-line no-param-reassign
-          hook.result = hook.result.filter(
-            game => game.players.indexOf(hasPlayer) !== -1
-          );
-        }
-      }
-    });
-
-    /**
-     * Only emit events about games to users who are playing that game.
-     */
-    app.service(ENDPOINT).filter((data, connection) => {
-      if (data.players.indexOf(connection.user.id) === -1) {
-        return false;
-      }
-
-      return data;
-    });
-
-    /**
-     * Hide hidden information from players. This means the _hidden field on the game and all players is removed,
-     * as well as the _private field for all players except the one requesting the information
-     */
     app.service(ENDPOINT).hooks({
-      async after(hook) {
-        if (hook.params.provider) {
-          hook.result = cleanGameData(hook.result, hook.params.user.id); // eslint-disable-line no-param-reassign
-        }
+      before: {
+        all: [authenticate()],
+        /**
+         * This hook removes the 'hasPlayer' query param from the client so that we can do our own manual processing
+         * in the after hook. If this wasn't here, the db service would look for games with a 'hasPlayer' field with
+         * this value.
+         */
+        find(hook) {
+          const { params } = hook;
+          const { query } = params;
 
-        // Fetch player data
-        const userIds = _.uniq(
-          _.flattenDeep(
-            hook.result.map(game => game._players.map(player => player.id))
-          )
-        );
-        const users = await Promise.all(
-          userIds.map(id => app.service('users').get(id))
-        );
-
-        // eslint-disable-next-line no-param-reassign
-        hook.result = hook.result.map(game => ({
-          ...game,
-          _meta: {
-            name: game.game,
-            players: game._players.map(({ id }) => {
-              const user = users.find(u => u.id === id);
-              return {
-                id,
-                name: user ? user.name : 'Player Not Found'
-              };
-            })
+          if (query.hasPlayer) {
+            params.hasPlayer = query.hasPlayer;
+            delete query.hasPlayer;
           }
-        }));
+        },
 
-        return hook;
+        create(hook) {
+          const module = gameProvider.getGameServerModule(hook.data);
+          module.setup(createNewGameData(hook.data));
+          hook.data.updated = new Date(); // eslint-disable-line no-param-reassign
+        },
+
+        update: updateBasedOnGameAction,
+        patch: hooks.disallow('external'),
+        remove: hooks.disallow('external')
+      },
+      after: {
+        /**
+         * Hide hidden information from players. This means the _hidden field on the game and all players is removed,
+         * as well as the _private field for all players except the one requesting the information
+         */
+        async all(hook) {
+          if (hook.params.provider) {
+            hook.result = cleanGameData(hook.result, hook.params.user.id); // eslint-disable-line no-param-reassign
+          }
+
+          // Fetch player data
+          const userIds = _.uniq(
+            _.flattenDeep(
+              hook.result.map(game => game._players.map(player => player.id))
+            )
+          );
+          const users = await Promise.all(
+            userIds.map(id => app.service('users').get(id))
+          );
+
+          // eslint-disable-next-line no-param-reassign
+          hook.result = hook.result.map(game => ({
+            ...game,
+            _meta: {
+              name: game.game,
+              players: game._players.map(({ id }) => {
+                const user = users.find(u => u.id === id);
+                return {
+                  id,
+                  name: user ? user.name : 'Player Not Found'
+                };
+              })
+            }
+          }));
+
+          return hook;
+        },
+
+        /**
+         * If the 'hasPlayer' query param was passed in to the service, it has been moved from the query to the params
+         * themselves to avoid collision with actual db queries. We now use this field to return only the relevant games.
+         */
+        find(hook) {
+          const { hasPlayer } = hook.params;
+
+          if (hasPlayer) {
+            // eslint-disable-next-line no-param-reassign
+            hook.result = hook.result.filter(
+              game => game.players.indexOf(hasPlayer) !== -1
+            );
+          }
+        }
       }
     });
 
-    app
-      .service(ENDPOINT)
-      .filter((data, connection) => cleanGameData(data, connection.user.id));
+    app.service(ENDPOINT);
   });
 };

@@ -45,12 +45,14 @@ module.exports = async function createUsersService(app) {
 
   const users = app.service(`${config.get('api')}/users`);
 
-  users.before({
-    create: [disallow('external')],
-    patch: [
-      authenticate(),
-      restrictToOwner({ idField: 'id', ownerField: 'id' }),
-      pluck('id', 'name')
-    ]
+  users.hooks({
+    before: {
+      create: [disallow('external')],
+      patch: [
+        authenticate(),
+        restrictToOwner({ idField: 'id', ownerField: 'id' }),
+        pluck('id', 'name')
+      ]
+    }
   });
 };
