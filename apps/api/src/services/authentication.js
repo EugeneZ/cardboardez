@@ -104,7 +104,7 @@ module.exports = function createAuthenticationService() {
     });
 
     // Actual authentication services
-    app.use('authenticate', attachHeaders, {
+    app.use(`${config.get('api')}/authenticate`, attachHeaders, {
       async find({ route: { headers } }) {
         validateHeaders(headers);
 

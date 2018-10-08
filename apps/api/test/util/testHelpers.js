@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const { inspect } = require('util');
 
-const baseURL = 'http://localhost:3000';
+const baseURL = 'http://localhost:3000/api/';
 
 module.exports.authenticateRequest = function authenticateRequest({
   authorization,
@@ -13,7 +13,7 @@ module.exports.authenticateRequest = function authenticateRequest({
     Authorization: `Bearer ${authorization}`
   };
 
-  const raw = fetch(baseURL + '/authenticate', {
+  const raw = fetch(baseURL + 'authenticate', {
     method,
     headers
   });
@@ -33,11 +33,11 @@ module.exports.authenticateRequest = function authenticateRequest({
 };
 
 module.exports.getUsers = async function getUsers() {
-  return fetch(baseURL + '/api/users').then(response => response.json());
+  return fetch(baseURL + 'users').then(response => response.json());
 };
 
 module.exports.getUser = async function getUser(id) {
-  return fetch(baseURL + '/api/users/' + id).then(response => response.json());
+  return fetch(baseURL + 'users/' + id).then(response => response.json());
 };
 
 module.exports.setupUsers = function setupUsers(users) {
